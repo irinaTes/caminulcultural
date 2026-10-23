@@ -1,0 +1,311 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #1f206a;
+  --color-navy-deep: #14154a;
+  --color-cherry: #df111f;
+  --color-cream: #f4ecdd;
+  /* The register's page, a shade lighter than cream. */
+  --color-paper: #fbf6ec;
+  --color-bordeaux: #6e1f2f;
+  --color-glow: #e9b44c;
+  /* The white-hot core of a glow-coloured neon tube. */
+  --color-neon: #ffe08a;
+  --color-drape-dark: #43101b;
+  --color-drape: #6a1e2e;
+  --color-cork: #b7834f;
+  --color-cork-frame: #5e3d22;
+  --color-cork-frame-dark: #3e2714;
+
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-body: var(--font-spectral), Georgia, serif;
+  --font-label: var(--font-dm-mono), ui-monospace, monospace;
+
+  --tracking-label: 0.14em;
+  --tracking-label-wide: 0.16em;
+
+  /* Fluid side gutter from the brief: clamp(16px, 5vw, 72px) */
+  --spacing-gutter: clamp(1rem, 5vw, 4.5rem);
+  --container-content: 87.5rem;
+
+  --animate-sway: cc-sway 5s ease-in-out infinite;
+  --animate-tail: cc-tail 3.4s ease-in-out infinite;
+  --animate-tail-left: cc-tail 3.9s ease-in-out infinite reverse;
+  --animate-tail-hang: cc-tail 4.4s ease-in-out infinite;
+  --animate-flicker: cc-flicker 1.6s 0.6s both;
+  --animate-spin-slow: spin 26s linear infinite;
+  --animate-lamp: cc-lamp 6s ease-in-out infinite;
+  --animate-buzz: cc-buzz 7s 3s linear infinite;
+
+  @keyframes cc-sway {
+    0%,
+    100% {
+      transform: rotate(-1.1deg);
+    }
+    50% {
+      transform: rotate(1.1deg);
+    }
+  }
+  @keyframes cc-tail {
+    0%,
+    100% {
+      transform: rotate(-7deg);
+    }
+    50% {
+      transform: rotate(9deg);
+    }
+  }
+  @keyframes cc-flicker {
+    0% {
+      opacity: 0;
+    }
+    8% {
+      opacity: 1;
+    }
+    11% {
+      opacity: 0.15;
+    }
+    18% {
+      opacity: 1;
+    }
+    21% {
+      opacity: 0.35;
+    }
+    26%,
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes cc-lamp {
+    0%,
+    100% {
+      transform: rotate(-2.2deg);
+    }
+    50% {
+      transform: rotate(2.2deg);
+    }
+  }
+  /* A neon tube that hiccups now and then. */
+  @keyframes cc-buzz {
+    0%,
+    91%,
+    93.5%,
+    96%,
+    100% {
+      opacity: 1;
+    }
+    92% {
+      opacity: 0.55;
+    }
+    95% {
+      opacity: 0.8;
+    }
+  }
+  @keyframes cc-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+}
+
+/*
+ * Large-screen scaling. Below 1600px the design is at its base size; above,
+ * everything sized in rem grows with the root font size. Media queries use
+ * the browser's initial font size, so these breakpoints stay put.
+ */
+html {
+  font-size: 100%;
+}
+@media (min-width: 1600px) {
+  html {
+    font-size: 110%;
+  }
+}
+@media (min-width: 1800px) {
+  html {
+    font-size: 122%;
+  }
+}
+@media (min-width: 2000px) {
+  html {
+    font-size: 135%;
+  }
+}
+@media (min-width: 2300px) {
+  html {
+    font-size: 155%;
+  }
+}
+@media (min-width: 2700px) {
+  html {
+    font-size: 180%;
+  }
+}
+@media (min-width: 3200px) {
+  html {
+    font-size: 210%;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-cream font-body font-light text-navy antialiased;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-glow);
+    outline-offset: 3px;
+  }
+}
+
+/* SVG parts that rotate around their own box (cat tails). */
+@utility origin-tail {
+  transform-box: fill-box;
+  transform-origin: 0% 100%;
+}
+@utility origin-tail-left {
+  transform-box: fill-box;
+  transform-origin: 100% 100%;
+}
+@utility origin-tail-hang {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+
+/* Hand-drawn line: pair with pathLength="1" on the path. */
+@utility draw-off {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+@utility draw-on {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: cc-draw 1.1s 1.8s ease forwards;
+}
+
+/* Neon tube: a pale core with layered glow-coloured halos. */
+@utility neon-text {
+  color: var(--color-neon);
+  text-shadow:
+    0 0 0.04em #fff,
+    0 0 0.1em var(--color-glow),
+    0 0 0.22em var(--color-glow),
+    0 0 0.45em rgb(233 180 76 / 0.75),
+    0 0 0.9em rgb(255 160 40 / 0.5);
+}
+@utility neon-stroke {
+  stroke: var(--color-neon);
+  filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 4px var(--color-glow))
+    drop-shadow(0 0 10px var(--color-glow))
+    drop-shadow(0 0 22px rgb(255 160 40 / 0.6));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Velvet curtain halves: folds plus a shadow towards the centre seam. */
+@utility bg-velvet-left {
+  background:
+    linear-gradient(
+      90deg,
+      rgb(0 0 0 / 0.15),
+      transparent 25%,
+      transparent 75%,
+      rgb(0 0 0 / 0.4)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      #561624 0,
+      #7c2839 16px,
+      #8a2f41 22px,
+      #561624 40px
+    );
+}
+@utility bg-velvet-right {
+  background:
+    linear-gradient(
+      90deg,
+      rgb(0 0 0 / 0.4),
+      transparent 25%,
+      transparent 75%,
+      rgb(0 0 0 / 0.15)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      #561624 0,
+      #7c2839 16px,
+      #8a2f41 22px,
+      #561624 40px
+    );
+}
+
+/* Header drape: rounded valance scallops and a row of gold beads below them. */
+@utility valance {
+  background: radial-gradient(
+      circle at 50% 0,
+      var(--color-drape) 0 19px,
+      transparent 20px
+    )
+    0 0 / 40px 22px repeat-x;
+  filter: drop-shadow(0 5px 6px rgb(0 0 0 / 0.35));
+}
+@utility valance-beads {
+  background: radial-gradient(
+      circle at 50% 50%,
+      var(--color-glow) 0 2px,
+      transparent 2.5px
+    )
+    18px 0 / 40px 4px repeat-x;
+}
+
+/*
+ * Cork board: a warm light following --bx/--by, pores and stains, the cork
+ * colour, and a thick dark wooden frame with an inner shadow.
+ */
+@utility bg-cork-board {
+  background:
+    radial-gradient(
+      circle 27.5rem at calc(var(--bx, 0.5) * 100%) calc(var(--by, 0.5) * 100%),
+      rgb(255 222 160 / 0.32),
+      rgb(255 222 160 / 0) 70%
+    ),
+    radial-gradient(
+        circle at 30% 40%,
+        rgb(92 56 24 / 0.55) 0 1.2px,
+        transparent 1.8px
+      )
+      0 0 / 13px 13px,
+    radial-gradient(
+        circle at 70% 20%,
+        rgb(70 40 16 / 0.45) 0 1px,
+        transparent 1.6px
+      )
+      4px 6px / 17px 17px,
+    radial-gradient(
+        circle at 50% 50%,
+        rgb(230 190 130 / 0.5) 0 1.4px,
+        transparent 2px
+      )
+      7px 2px / 11px 11px,
+    radial-gradient(
+        ellipse at 40% 60%,
+        rgb(120 76 36 / 0.35) 0 3px,
+        transparent 5px
+      )
+      0 0 / 41px 37px,
+    var(--color-cork);
+  box-shadow:
+    inset 0 0 0 16px var(--color-cork-frame),
+    inset 0 0 0 19px var(--color-cork-frame-dark),
+    inset 0 0 50px 20px rgb(62 36 14 / 0.45),
+    0 18px 40px rgb(31 32 106 / 0.25);
+}
