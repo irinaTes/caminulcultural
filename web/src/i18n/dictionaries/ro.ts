@@ -251,6 +251,23 @@ const ro = {
     privacy: "Confidențialitate",
     cancellation: "Politica de anulare",
   },
+  legal: {
+    label: "Informații legale",
+    stubNote:
+      "Pagina e în lucru: textul final apare aici înainte să pornim plățile online.",
+    terms: {
+      title: "Termeni și condiții",
+      placeholder: "[TEXT TERMENI ȘI CONDIȚII]",
+    },
+    privacy: {
+      title: "Politica de confidențialitate",
+      placeholder: "[TEXT POLITICA DE CONFIDENȚIALITATE]",
+    },
+    cancellation: {
+      title: "Politica de anulare",
+      placeholder: "[TEXT POLITICA DE ANULARE]",
+    },
+  },
   dev: {
     title: "Pagina de test",
     intro:

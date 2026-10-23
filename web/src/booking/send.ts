@@ -3,7 +3,7 @@ import { Resend } from "resend";
 import type { Email } from "./emails";
 
 const apiKey = process.env.RESEND_API_KEY;
-/** "Căminul Cultural 31 <rezervari@domeniul-vostru.ro>", on a domain verified in Resend. */
+/** "Căminul Cultural 31 <rezervari@your-domain.ro>", on a domain verified in Resend. */
 const from = process.env.BOOKING_FROM_EMAIL;
 
 const resend = apiKey ? new Resend(apiKey) : null;

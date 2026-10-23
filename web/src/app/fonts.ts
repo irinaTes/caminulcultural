@@ -8,9 +8,10 @@ export const fraunces = Fraunces({
   display: "swap",
 });
 
+// Body text is all 300 (the brief); bold in rich text is synthesized.
 export const spectral = Spectral({
   subsets: ["latin", "latin-ext"],
-  weight: ["300", "400"],
+  weight: ["300"],
   style: ["normal", "italic"],
   variable: "--font-spectral",
   display: "swap",
@@ -21,6 +22,9 @@ export const dmMono = DM_Mono({
   weight: ["400", "500"],
   variable: "--font-dm-mono",
   display: "swap",
+  // Small labels only: not worth delaying the first paint for. The size-
+  // adjusted fallback keeps the swap from shifting the layout.
+  preload: false,
 });
 
 /** The three `--font-*` variables, for the `<html>` element. */

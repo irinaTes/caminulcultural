@@ -11,7 +11,7 @@ The repo holds two apps that share the same Sanity data (project `r3j22rbn`, dat
 
 ## Requirements
 
-- Node.js 22.12 or newer (24 LTS recommended) and npm.
+- Node.js 24 (pinned in `package.json` and `.nvmrc`; Vercel uses it too) and npm.
 - Access to the Sanity project (an invite from [sanity.io/manage](https://www.sanity.io/manage)).
 - For booking emails: a [Resend](https://resend.com) account with a verified domain. Optional locally.
 
@@ -43,11 +43,13 @@ Open http://localhost:3333. Whatever you publish there shows up on the local sit
 
 | Variable | Required | What it does |
 |---|---|---|
+| `NEXT_PUBLIC_SITE_URL` | once there's a domain | The public address, e.g. `https://caminulcultural31.ro`, used for canonical links, the sitemap and share previews. Read at build time. Until it's set, Vercel's production URL is used. |
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` | yes | `r3j22rbn` |
 | `NEXT_PUBLIC_SANITY_DATASET` | yes | `production` |
 | `RESEND_API_KEY` | in production | Resend key for the booking emails. Without it, `npm run dev` prints the emails in the terminal instead of sending them, and production refuses bookings. |
 | `BOOKING_FROM_EMAIL` | in production | The sender, on a domain verified in Resend, e.g. `Căminul Cultural 31 <rezervari@your-domain.ro>`. |
 | `BOOKING_TO_EMAIL` | no | Where booking requests go. If empty, the email from "Setări site" (Site settings) in the Studio is used. |
+| `SANITY_REVALIDATE_SECRET` | in production | Shared secret of the Sanity webhook below. Any long random string, e.g. from `openssl rand -hex 32`. |
 
 `.env.local` is never committed; the template is `web/.env.example`.
 
@@ -122,6 +124,25 @@ The first time, it asks for a name, e.g. `caminulcultural31` → `https://caminu
 
 Invite new editors from sanity.io/manage → the project → Members (the Editor role is enough).
 
+### Webhook in Sanity (refreshes the site on publish)
+
+Live updates only reach visitors who have the site open. So that edits made while nobody is on the site still show up, Sanity calls the site on every change:
+
+sanity.io/manage → the project → API → Webhooks → Create webhook:
+
+- **URL:** `https://<your-domain>/api/revalidate`
+- **Dataset:** `production`
+- **Trigger on:** Create, Update, Delete
+- **Filter:** `_type in ["workshop", "session", "review", "siteSettings"]`
+- **HTTP method:** POST, with drafts and versions off
+- **Secret:** the same value as `SANITY_REVALIDATE_SECRET` on Vercel
+
+The route rejects calls without a valid signature. After a publish, the next visit renders fresh content.
+
+### Analytics
+
+Vercel → the project → Analytics → Enable. The site already includes the script; it's cookie-free, so no cookie banner is needed. Page views show up in the same tab.
+
 ### CORS in Sanity
 
 In sanity.io/manage → API → CORS origins, add the site's domain (and the Vercel one, if you like), **without** "Allow credentials". Without it, live updates in the browser are blocked. Sanity adds the Studio's domain on its own.
@@ -132,12 +153,14 @@ Deploy the Studio first (`npm run deploy`), then push the site if the queries ch
 
 ## Code layout (`web/src/`)
 
-- `app/[lang]/`: the pages: home, `atelier/[slug]`.
+- `app/[lang]/`: the pages: home, `atelier/[slug]`, the legal pages (`termeni`, `confidentialitate`, `anulare`, stubs for now), the share image.
+- `app/api/revalidate/`: the Sanity webhook. `app/sitemap.ts`, `app/robots.ts`, `app/icon.svg`: SEO and icons.
 - `components/sections/`: one folder per section (hero, poster board, rent, gift ticket, register, directions, workshop).
 - `components/ui/`, `components/site/`, `components/cats/`: reusable pieces, header/footer, the cat SVGs.
 - `data/`: loading data from Sanity (cached) and the UI types.
 - `booking/`: bookings (Server Action, validation, emails).
 - `i18n/dictionaries/{ro,en}.ts`: all the text on the site.
 - `sanity/`: the client, the queries and the generated types.
+- `lib/seo.ts`, `lib/structuredData.ts`: canonical/hreflang/Open Graph tags and JSON-LD (`LocalBusiness`, one `Event` per session).
 
 Brand, colour, tone and copy rules are in `.claude/skills/cc31-brand/SKILL.md`.

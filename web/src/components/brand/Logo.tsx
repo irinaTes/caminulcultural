@@ -3,13 +3,24 @@ type LogoProps = {
   /** Accessible name. Without it the logo is treated as decorative. */
   title?: string;
   className?: string;
+  /** Fixed pixel size, where CSS can't size it (e.g. the Open Graph image). */
+  width?: number;
+  height?: number;
 };
 
 /** The original CC31 logo: crooked double frame, monogram, cat and martini glass. */
-export function Logo({ color = "currentColor", title, className }: LogoProps) {
+export function Logo({
+  color = "currentColor",
+  title,
+  className,
+  width,
+  height,
+}: LogoProps) {
   return (
     <svg
       viewBox="0 0 236.78 220.04"
+      width={width}
+      height={height}
       className={className}
       role={title ? "img" : undefined}
       aria-hidden={title ? undefined : true}

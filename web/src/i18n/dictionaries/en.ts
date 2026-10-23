@@ -257,6 +257,23 @@ const en: Dictionary = {
     privacy: "Privacy",
     cancellation: "Cancellation policy",
   },
+  legal: {
+    label: "Legal information",
+    stubNote:
+      "This page is a work in progress: the final text will be here before online payments open.",
+    terms: {
+      title: "Terms and conditions",
+      placeholder: "[TEXT TERMENI ȘI CONDIȚII]",
+    },
+    privacy: {
+      title: "Privacy policy",
+      placeholder: "[TEXT POLITICA DE CONFIDENȚIALITATE]",
+    },
+    cancellation: {
+      title: "Cancellation policy",
+      placeholder: "[TEXT POLITICA DE ANULARE]",
+    },
+  },
   dev: {
     title: "Test page",
     intro:

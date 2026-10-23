@@ -1,5 +1,8 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { sectionIds } from "@/config/site";
+import { siteUrl } from "@/config/siteUrl";
 import { locales } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
 import { SanityLive } from "@/sanity/live";
@@ -12,7 +15,12 @@ export function generateStaticParams() {
 
 export async function generateMetadata(): Promise<Metadata> {
   const { meta } = await getDictionary();
-  return { title: meta.title, description: meta.description };
+  return {
+    metadataBase: siteUrl,
+    // Pages give their own title; the site name follows it.
+    title: { default: meta.title, template: `%s · ${meta.title}` },
+    description: meta.description,
+  };
 }
 
 export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
@@ -29,6 +37,10 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
         </a>
         {children}
         <SanityLive includeDrafts={false} />
+        {/* Cookie-free page views; it reads the URL, hence the boundary. */}
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
       </body>
     </html>
   );

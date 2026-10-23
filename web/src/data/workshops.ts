@@ -124,6 +124,7 @@ function toSummary(
 ): WorkshopSummary {
   const sessions: SessionSlot[] = workshop.sessions.map((session) => ({
     id: session._id,
+    startsAt: session.startsAt,
     ...zonedDateTime(session.startsAt, siteTimeZone),
     seatsLeft: session.seatsLeft,
     full: session.status === "full" || session.seatsLeft === 0,

@@ -186,11 +186,10 @@ export default async function DevPage() {
           </div>
           <div className="flex flex-col gap-2">
             <dt className="font-label text-xs tracking-label uppercase">
-              Spectral 300 / 300 italic / 400
+              Spectral 300 / 300 italic
             </dt>
             <dd className="text-xl leading-relaxed">{t.pangram}</dd>
             <dd className="text-xl leading-relaxed italic">{t.pangram}</dd>
-            <dd className="text-xl leading-relaxed font-normal">{t.pangram}</dd>
           </div>
           <div className="flex flex-col gap-2">
             <dt className="font-label text-xs tracking-label uppercase">

@@ -14,6 +14,8 @@ export type SessionDay = {
 
 export type SessionSlot = {
   id: string;
+  /** The exact start, as an ISO instant. */
+  startsAt: string;
   date: string;
   /** "19:30", Bucharest time. */
   time: string;

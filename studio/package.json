@@ -37,5 +37,8 @@
     "printWidth": 100,
     "semi": false,
     "singleQuote": true
+  },
+  "engines": {
+    "node": "24.x"
   }
 }
