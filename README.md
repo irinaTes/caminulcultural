@@ -84,7 +84,7 @@ On each workshop's page (`/atelier/<slug>`), the visitor picks a day, a time and
 2. Two emails go out: one to you (Reply-To = the customer) and a confirmation to the customer, in their language ("we'll confirm within 24 hours").
 3. **Seats don't go down automatically.** After you confirm a booking, update "Locuri rămase" (seats left) on the session in the Studio.
 
-Anti-spam: a hidden honeypot field, and at most 5 requests per 10 minutes from the same connection.
+Anti-spam: a hidden honeypot field, and at most 5 requests per 10 minutes from the same connection (counted per server instance, so it only slows a bot down). The customer's confirmation never repeats free text: the note only goes to you, and names with links or addresses are refused, so the form can't be used to mail someone else's message from your domain.
 
 The code lives in `web/src/booking/`. Online payment (Stripe, stage 2) will replace only the email step.
 
@@ -99,6 +99,12 @@ npm run typegen   # writes web/src/sanity/sanity.types.ts
 
 Run it after any change in `studio/schemaTypes/` or `web/src/sanity/queries.ts`.
 
+## Security headers and images
+
+`web/next.config.ts` sets a Content-Security-Policy and the usual security headers on every page. The CSP only lets the browser load from the site itself, Sanity's image CDN and the project's Sanity API. **If you add anything from another domain** (an embedded map, a font, a script), add that domain to the policy there, or the browser will block it.
+
+Images don't go through Next's image optimizer: `web/src/sanity/imageLoader.ts` asks Sanity's CDN for each size directly (WebP/AVIF, cached by Sanity). This also keeps the site under Vercel's image quota.
+
 ## Checks
 
 In `web/`:
@@ -109,6 +115,8 @@ npx tsc --noEmit
 npm run format:check   # npm run format fixes formatting
 npm run build
 ```
+
+GitHub runs the same checks on every push to `main` and on pull requests (`.github/workflows/ci.yml`).
 
 ## Deploying
 

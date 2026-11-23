@@ -10,7 +10,14 @@ const MAX_PEOPLE = 15;
 export const bookingSchema = z.object({
   session: z.string().trim().min(1).max(100),
   people: z.coerce.number().int().min(1).max(MAX_PEOPLE),
-  name: z.string().trim().min(2).max(80),
+  // The name is in the customer's confirmation, so no links or addresses:
+  // the form mustn't send someone else's message from our domain.
+  name: z
+    .string()
+    .trim()
+    .min(2)
+    .max(80)
+    .refine((name) => !/[/@<>:\\]|\.\p{L}{2}/iu.test(name)),
   email: z.string().trim().max(200).pipe(z.email()),
   // Digits with the usual separators: "+40 712 345 678", "0712-345-678".
   phone: z

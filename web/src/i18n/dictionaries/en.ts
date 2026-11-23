@@ -154,7 +154,6 @@ const en: Dictionary = {
     when: "When",
     people: "How many",
     total: "Total",
-    note: "Your note",
     outro:
       "If you'd like to change anything, just reply to this email. See you at the Cămin!",
     signature: "Căminul Cultural 31",

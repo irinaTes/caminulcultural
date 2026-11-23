@@ -26,13 +26,14 @@ export async function customerEmail(
   const intl = intlLocales[input.lang];
   const when = longDateTime(session.startsAt, intl, siteTimeZone);
 
+  // Only details we wrote go in: the address is the visitor's word, so free
+  // text (the note) would let anyone mail their own message from our domain.
   const rows: Row[] = [
     [t.workshop, session.workshop],
     [t.when, when],
     [t.people, plural(dict.workshop.peopleCount, input.people, intl)],
     [t.total, total(input.people, session.priceLei, dict.workshop.totalValue)],
   ];
-  if (input.note) rows.push([t.note, input.note]);
 
   return render({
     subject: fill(t.subject, { workshop: session.workshop, when }),

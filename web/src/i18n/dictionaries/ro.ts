@@ -150,7 +150,6 @@ const ro = {
     when: "Când",
     people: "Câți veniți",
     total: "Total",
-    note: "Nota ta",
     outro:
       "Dacă vrei să schimbi ceva, răspunde la mailul ăsta. Ne vedem la Cămin!",
     signature: "Căminul Cultural 31",

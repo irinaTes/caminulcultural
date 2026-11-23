@@ -11,7 +11,7 @@ export const whatsappHref = (phone: string) =>
   `https://wa.me/${phone.replace(/\D/g, "")}`;
 
 export const instagramHref = (account: string) =>
-  `https://www.instagram.com/${account}/`;
+  `https://www.instagram.com/${encodeURIComponent(account.replace(/^@/, ""))}/`;
 
 /** A Google Maps search for the address; opens the app on phones. */
 export const mapsHref = (address: string) =>
