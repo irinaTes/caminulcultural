@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
     // The root layout sits under [lang], so unmatched URLs need a 404 page
     // that doesn't depend on it.
     globalNotFound: true,
+    agentUpgrade: "security",
   },
 };
 
