@@ -51,8 +51,24 @@ export type Poster = WorkshopSummary & {
   rotation: number;
 };
 
+/** One photo on a workshop's gallery wall. */
+export type GalleryPhoto = {
+  id: string;
+  /** null for a placeholder frame, shown until the editor adds photos. */
+  src: string | null;
+  alt: string;
+  /** The (cropped) photo's size, for its shape on the wall and in the viewer. */
+  width: number;
+  height: number;
+  lqip: string | null;
+  /** CSS object-position from the editor's hotspot, e.g. "50% 30%". */
+  focus: string;
+};
+
 export type WorkshopDetail = WorkshopSummary & {
   capacity: number | null;
+  /** Empty when the editor hasn't added photos; the page then has no gallery. */
+  gallery: GalleryPhoto[];
   /** Portable Text; empty when the editor hasn't written one. */
   description: NonNullable<LocaleBlockContent["ro"]>;
 };

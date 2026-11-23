@@ -17,6 +17,15 @@ The repo holds two apps that share the same Sanity data (project `r3j22rbn`, dat
 
 ## Running locally
 
+From the repo root, after the one-time setup below (`.env.local`, `npx sanity login`):
+
+```bash
+npm install   # also installs web/ and studio/
+npm run dev   # site on :3000 and Studio on :3333, in one terminal
+```
+
+`npm run dev:web` or `npm run dev:studio` starts just one of them. To work inside a single folder instead:
+
 ### The site
 
 ```bash
@@ -58,6 +67,7 @@ Open http://localhost:3333. Whatever you publish there shows up on the local sit
 The Studio is in Romanian; the names in quotes below are what you'll see there.
 
 - **Workshops ("Ateliere"):** title, verb, description, photo (with alt text), price, duration, capacity. Drag and drop to change their order on the poster board. "Ascuns" (hidden) takes a workshop off the site.
+- **Gallery ("Galeria", inside each workshop):** the photo wall on the workshop page, each photo with alt text. Drag to reorder; the site picks each frame's size from the photo's shape. Until it has photos, the page shows striped `[FOTO n]` placeholders.
 - **Sessions ("Sesiuni"):** the workshop, date and time (Romanian time), seats left, status (open / full / cancelled). The site only shows sessions that haven't started yet.
 - **Reviews ("Recenzii"):** appear in the register ("Condica") only when "Apare pe site" (shown on site) is on.
 - **Site settings ("Setări site"):** address, metro station, email, WhatsApp, Instagram, company details, the hidden cat's promo code, and the team ("Echipa": name, role, a few lines and a square portrait for each person on the honour board in the About section). The manifesto itself is site copy, in the dictionaries.

@@ -16,7 +16,7 @@ import {
   type BookingField,
   type BookingState,
 } from "@/booking/state";
-import { DayTimeChips } from "@/components/sessions/DayTimeChips";
+import { SessionChips } from "@/components/sessions/SessionChips";
 import { useSessionChoice } from "@/components/sessions/useSessionChoice";
 import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -32,8 +32,7 @@ const MAX_GROUP = 10;
 
 export type BookingFormText = Pick<
   Dictionary["workshop"],
-  | "day"
-  | "time"
+  | "when"
   | "full"
   | "seatsLeft"
   | "pickPrompt"
@@ -102,10 +101,7 @@ function BookingRequest({
   initial,
   onAgain,
 }: BookingFormProps & { onAgain: () => void }) {
-  const { day, time, setDay, setTime, times, session } = useSessionChoice(
-    sessions,
-    initial,
-  );
+  const { session, select } = useSessionChoice(sessions, initial);
   const [requested, setRequested] = useState(1);
   const [missingSession, setMissingSession] = useState(false);
   const [state, formAction, pending] = useActionState(
@@ -157,13 +153,11 @@ function BookingRequest({
       aria-busy={pending}
       className="relative flex flex-col gap-2.5"
     >
-      <DayTimeChips
+      <SessionChips
         days={days}
-        times={times}
-        day={day}
-        time={time}
-        onDay={setDay}
-        onTime={setTime}
+        sessions={sessions}
+        selectedId={session?.id ?? null}
+        onSelect={select}
         t={t}
         seatsLabel={seats}
       />

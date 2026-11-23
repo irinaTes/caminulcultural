@@ -92,7 +92,7 @@ export function IllustratedMap({ pinLabel }: { pinLabel: string }) {
           fontSize="18"
           fontStyle="italic"
           fontWeight="600"
-          fill="#6E1F2F"
+          fill="#7A0F2E"
           style={{ fontFamily: "var(--font-display)" }}
         >
           {pinLabel}

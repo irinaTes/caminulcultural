@@ -4,6 +4,7 @@ import { sectionHref, sectionIds, type SectionId } from "@/config/site";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
 import { LanguageSwitch } from "./LanguageSwitch";
 import { MobileMenu } from "./MobileMenu";
+import { ScrollAwayHeader } from "./ScrollAwayHeader";
 
 type HeaderProps = {
   /** The current page's path without the locale prefix, for the language switch. */
@@ -34,7 +35,7 @@ export async function Header({ path = "/" }: HeaderProps) {
   );
 
   return (
-    <header className="relative z-20 bg-linear-to-b from-drape-dark via-[#5A1726] via-70% to-drape px-gutter pt-5 pb-5.5 text-cream shadow-[inset_0_-3px_0_rgba(233,180,76,0.75)]">
+    <ScrollAwayHeader className="bg-linear-to-b from-drape-dark via-[#5A1726] via-70% to-drape px-gutter pt-5 pb-5.5 text-cream shadow-[inset_0_-3px_0_rgba(233,180,76,0.75)]">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 -bottom-5.5 h-5.5 valance"
@@ -88,6 +89,6 @@ export async function Header({ path = "/" }: HeaderProps) {
           {languageSwitch}
         </MobileMenu>
       </div>
-    </header>
+    </ScrollAwayHeader>
   );
 }

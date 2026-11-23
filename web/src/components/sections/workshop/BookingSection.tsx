@@ -1,5 +1,6 @@
 import { Suspense } from "react";
-import { SectionHeader } from "@/components/ui/SectionHeader";
+import { PartyCat } from "@/components/cats";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import type { WorkshopDetail } from "@/data/types";
 import { intlLocales } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
@@ -18,8 +19,7 @@ export async function BookingSection({ workshop }: BookingSectionProps) {
 
   // Only the strings the form needs cross into the client bundle.
   const text: BookingFormText = {
-    day: t.day,
-    time: t.time,
+    when: t.when,
     full: t.full,
     seatsLeft: t.seatsLeft,
     pickPrompt: t.pickPrompt,
@@ -64,18 +64,26 @@ export async function BookingSection({ workshop }: BookingSectionProps) {
   return (
     <section
       aria-labelledby={titleId}
-      className="bg-navy pt-20 pb-24 text-cream"
+      className="bg-navy px-gutter pt-20 pb-24 text-cream"
     >
-      <SectionHeader
-        titleId={titleId}
-        label={t.bookingLabel}
-        title={t.bookingTitle}
-        intro={t.bookingIntro}
-        tone="dark"
-        className="mb-12"
-      />
-      <div className="mx-auto max-w-content px-gutter">
-        <div className="max-w-200 bg-cream p-6 text-navy shadow-[0_16px_30px_rgba(0,0,0,0.35)] sm:p-10">
+      {/* Two columns from lg. The left one is as tall as the form, so the cat
+          sits in its bottom corner. */}
+      <div className="mx-auto grid max-w-350 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:gap-22">
+        <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-3.5">
+            <SectionHeading
+              titleId={titleId}
+              label={t.bookingLabel}
+              title={t.bookingTitle}
+              tone="dark"
+            />
+            <p className="max-w-115 text-xl leading-[1.55] lg:max-w-none lg:text-[1.75rem] lg:leading-[1.45]">
+              {t.bookingIntro}
+            </p>
+          </div>
+          <PartyCat className="mt-auto w-47.5 max-lg:hidden" />
+        </div>
+        <div className="bg-cream p-6 text-navy shadow-[0_16px_30px_rgba(0,0,0,0.35)] sm:p-10">
           {workshop.sessions.length > 0 ? (
             <Suspense fallback={<BookingForm {...formProps} />}>
               <BookingFormFromUrl {...formProps} />

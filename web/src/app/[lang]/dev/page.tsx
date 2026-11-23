@@ -48,7 +48,7 @@ const palette = [
   {
     name: "Velvet Bordeaux",
     token: "bordeaux",
-    hex: "#6E1F2F",
+    hex: "#7A0F2E",
     className: "bg-bordeaux text-cream",
   },
   {

@@ -141,7 +141,7 @@ export function BoardStage({ label, children, decorations }: BoardStageProps) {
           >
             <div
               ref={trackRef}
-              className="relative flex flex-col gap-12 md:grid md:w-max md:flex-none md:auto-cols-[min(40rem,78vw)] md:grid-flow-col md:grid-rows-[repeat(2,auto)] md:gap-x-12 md:gap-y-14 md:py-5 md:pr-14 md:will-change-transform"
+              className="relative flex flex-col gap-12 md:grid md:w-max md:flex-none md:auto-cols-[min(52rem,85vw)] md:grid-flow-col md:grid-rows-[repeat(2,auto)] md:gap-x-12 md:gap-y-14 md:py-5 md:pr-14 md:will-change-transform"
             >
               {children}
             </div>

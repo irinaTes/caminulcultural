@@ -16,6 +16,14 @@ type PosterCardProps = {
   t: Dictionary["posterBoard"];
 };
 
+/**
+ * Square photo. On a phone it spans the card's width above the text. From md
+ * up it's an 18rem square on the left; the card is at least that tall, so the
+ * photo reaches the bottom. A taller text stretches it rather than leave a gap.
+ */
+const photoBox =
+  "aspect-square md:aspect-auto md:min-h-72 md:w-72 md:flex-none md:self-stretch";
+
 /** Striped placeholder tints for workshops without a photo yet. */
 const photoTints = [
   ["#E7D3A8", "#DFC793"],
@@ -40,7 +48,7 @@ export function PosterCard({ locale, poster, index, t }: PosterCardProps) {
       <article
         aria-labelledby={titleId}
         style={{ rotate: `${poster.rotation}deg` }}
-        className="relative flex h-full flex-wrap gap-4.5 bg-cream p-4 text-navy shadow-[0_16px_30px_rgba(0,0,0,0.35)] transition-[translate,scale,filter] duration-350 hover:-translate-y-2.5 hover:scale-[1.035] hover:drop-shadow-[0_18px_18px_rgba(0,0,0,0.35)]"
+        className="relative flex h-full flex-col gap-4.5 bg-cream p-4 text-navy shadow-[0_16px_30px_rgba(0,0,0,0.35)] transition-[translate,scale,filter] duration-350 hover:-translate-y-2.5 hover:scale-[1.035] hover:drop-shadow-[0_18px_18px_rgba(0,0,0,0.35)] md:flex-row"
       >
         <span
           aria-hidden="true"
@@ -51,12 +59,12 @@ export function PosterCard({ locale, poster, index, t }: PosterCardProps) {
         />
 
         {poster.photo ? (
-          <div className="relative min-h-57.5 flex-[1_1_12.5rem]">
+          <div className={cn("relative", photoBox)}>
             <Image
               src={poster.photo.src}
               alt={poster.photo.alt}
               fill
-              sizes="(min-width: 768px) 20rem, 100vw"
+              sizes="(min-width: 768px) 22rem, 100vw"
               placeholder={poster.photo.lqip ? "blur" : "empty"}
               blurDataURL={poster.photo.lqip ?? undefined}
               className="object-cover"
@@ -66,22 +74,25 @@ export function PosterCard({ locale, poster, index, t }: PosterCardProps) {
           <div
             role="img"
             aria-label={fill(t.photoAlt, { name: poster.name.toLowerCase() })}
-            className="flex min-h-57.5 flex-[1_1_12.5rem] items-center justify-center"
+            className={cn("relative", photoBox)}
             style={{
               background: `repeating-linear-gradient(135deg, ${tintA} 0 16px, ${tintB} 16px 32px)`,
             }}
           >
-            <Eyebrow
-              inline
-              size="xs"
-              className="bg-cream px-2.5 py-1.75 text-navy"
-            >
-              {fill(t.photoPlaceholder, { name: poster.name })}
-            </Eyebrow>
+            {/* Out of flow, like the real photo, so the label can't set the box's width. */}
+            <div className="absolute inset-0 flex items-center justify-center p-2">
+              <Eyebrow
+                inline
+                size="xs"
+                className="bg-cream px-2.5 py-1.75 text-navy"
+              >
+                {fill(t.photoPlaceholder, { name: poster.name })}
+              </Eyebrow>
+            </div>
           </div>
         )}
 
-        <div className="flex min-w-0 flex-[1.5_1_17.5rem] flex-col gap-2.5 px-1 pt-1 pb-0.5">
+        <div className="flex min-w-0 flex-col gap-2.5 px-1 pt-1 pb-0.5 md:flex-1">
           <Eyebrow size="sm">
             {fill(t.kicker, { name: poster.name, hours: poster.durationHours })}
           </Eyebrow>
@@ -106,8 +117,7 @@ export function PosterCard({ locale, poster, index, t }: PosterCardProps) {
             sessions={poster.sessions}
             price={fill(t.price, { price: poster.priceLei ?? "[PREȚ]" })}
             t={{
-              day: t.day,
-              time: t.time,
+              when: t.when,
               full: t.full,
               pickPrompt: t.pickPrompt,
               book: t.book,

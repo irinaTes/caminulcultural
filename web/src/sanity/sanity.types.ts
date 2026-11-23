@@ -168,6 +168,15 @@ export type Workshop = {
     alt?: LocaleString;
     _type: "image";
   };
+  gallery?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: LocaleString;
+    _type: "galleryPhoto";
+    _key: string;
+  }>;
   price?: number;
   durationHours: number;
   capacity?: number;
@@ -310,7 +319,7 @@ export type POSTER_BOARD_QUERY_RESULT = Array<{
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: WORKSHOP_PAGE_QUERY
-// Query: *[_type == "workshop" && slug.current == $slug && hidden != true][0] {    _id,    "slug": slug.current,    title,    verb,    shortLine,    description,    price,    durationHours,    capacity,      "photo": photo {    asset,    hotspot,    crop,    alt,    "lqip": asset->metadata.lqip  },      "sessions": *[    _type == "session"    && workshop._ref == ^._id    && status != "cancelled"    && dateTime(startsAt) > dateTime($now)  ] | order(startsAt asc) { _id, startsAt, seatsLeft, status }  }
+// Query: *[_type == "workshop" && slug.current == $slug && hidden != true][0] {    _id,    "slug": slug.current,    title,    verb,    shortLine,    description,    price,    durationHours,    capacity,      "photo": photo {    asset,    hotspot,    crop,    alt,    "lqip": asset->metadata.lqip  },      "gallery": gallery[defined(asset)] {    _key,    asset,    hotspot,    crop,    alt,    "lqip": asset->metadata.lqip,    "dimensions": asset->metadata.dimensions { width, height }  },      "sessions": *[    _type == "session"    && workshop._ref == ^._id    && status != "cancelled"    && dateTime(startsAt) > dateTime($now)  ] | order(startsAt asc) { _id, startsAt, seatsLeft, status }  }
 export type WORKSHOP_PAGE_QUERY_RESULT = {
   _id: string;
   slug: string;
@@ -328,6 +337,18 @@ export type WORKSHOP_PAGE_QUERY_RESULT = {
     alt: LocaleString | null;
     lqip: string | null;
   } | null;
+  gallery: Array<{
+    _key: string;
+    asset: SanityImageAssetReference;
+    hotspot: SanityImageHotspot | null;
+    crop: SanityImageCrop | null;
+    alt: LocaleString | null;
+    lqip: string | null;
+    dimensions: {
+      width: number;
+      height: number;
+    } | null;
+  }> | null;
   sessions: Array<{
     _id: string;
     startsAt: string;
@@ -423,7 +444,7 @@ export type SITE_SETTINGS_QUERY_RESULT = {
 declare global {
   interface SanityQueries {
     "\n  *[_type == \"workshop\" && hidden != true] | order(orderRank) {\n    _id,\n    \"slug\": slug.current,\n    title,\n    verb,\n    shortLine,\n    price,\n    durationHours,\n    pinColor,\n    \n  \"photo\": photo {\n    asset,\n    hotspot,\n    crop,\n    alt,\n    \"lqip\": asset->metadata.lqip\n  }\n,\n    \n  \"sessions\": *[\n    _type == \"session\"\n    && workshop._ref == ^._id\n    && status != \"cancelled\"\n    && dateTime(startsAt) > dateTime($now)\n  ] | order(startsAt asc) { _id, startsAt, seatsLeft, status }\n\n  }[count(sessions) > 0]\n": POSTER_BOARD_QUERY_RESULT;
-    "\n  *[_type == \"workshop\" && slug.current == $slug && hidden != true][0] {\n    _id,\n    \"slug\": slug.current,\n    title,\n    verb,\n    shortLine,\n    description,\n    price,\n    durationHours,\n    capacity,\n    \n  \"photo\": photo {\n    asset,\n    hotspot,\n    crop,\n    alt,\n    \"lqip\": asset->metadata.lqip\n  }\n,\n    \n  \"sessions\": *[\n    _type == \"session\"\n    && workshop._ref == ^._id\n    && status != \"cancelled\"\n    && dateTime(startsAt) > dateTime($now)\n  ] | order(startsAt asc) { _id, startsAt, seatsLeft, status }\n\n  }\n": WORKSHOP_PAGE_QUERY_RESULT;
+    "\n  *[_type == \"workshop\" && slug.current == $slug && hidden != true][0] {\n    _id,\n    \"slug\": slug.current,\n    title,\n    verb,\n    shortLine,\n    description,\n    price,\n    durationHours,\n    capacity,\n    \n  \"photo\": photo {\n    asset,\n    hotspot,\n    crop,\n    alt,\n    \"lqip\": asset->metadata.lqip\n  }\n,\n    \n  \"gallery\": gallery[defined(asset)] {\n    _key,\n    asset,\n    hotspot,\n    crop,\n    alt,\n    \"lqip\": asset->metadata.lqip,\n    \"dimensions\": asset->metadata.dimensions { width, height }\n  }\n,\n    \n  \"sessions\": *[\n    _type == \"session\"\n    && workshop._ref == ^._id\n    && status != \"cancelled\"\n    && dateTime(startsAt) > dateTime($now)\n  ] | order(startsAt asc) { _id, startsAt, seatsLeft, status }\n\n  }\n": WORKSHOP_PAGE_QUERY_RESULT;
     "\n  *[_type == \"workshop\" && hidden != true && defined(slug.current)].slug.current\n": WORKSHOP_SLUGS_QUERY_RESULT;
     "\n  *[_type == \"workshop\" && hidden != true] | order(orderRank) { _id, title }\n": WORKSHOP_NAMES_QUERY_RESULT;
     "\n  *[_type == \"review\" && published == true] | order(date desc)[0...8] {\n    _id,\n    firstName,\n    text,\n    language,\n    date\n  }\n": REVIEWS_QUERY_RESULT;

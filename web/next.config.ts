@@ -1,7 +1,13 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 import { sanity } from "next-sanity/live/cache-life";
 
 const nextConfig: NextConfig = {
+  // The repo root has its own package-lock.json (it only starts web and studio
+  // together), so tell Turbopack the app lives here.
+  turbopack: {
+    root: path.join(__dirname),
+  },
   cacheComponents: true,
   cacheLife: {
     default: sanity,

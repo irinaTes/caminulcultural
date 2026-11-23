@@ -1,6 +1,6 @@
 import {SparklesIcon} from '@sanity/icons/Sparkles'
 import {orderRankField, orderRankOrdering} from '@sanity/orderable-document-list'
-import {defineField, defineType} from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
 import {slugify} from '../../lib/languages'
 import {requireLocales} from '../objects/localized'
 
@@ -63,6 +63,33 @@ export const workshop = defineType({
             'Pentru cine nu vede poza (cititoare de ecran). De ex. „Mâini care lipesc cioburi de oglindă pe o ramă”.',
           type: 'localeString',
           validation: (rule) => requireLocales(rule, {englishRequired: true}),
+        }),
+      ],
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'Galeria',
+      description:
+        'Pozele de pe peretele din pagina atelierului. Poți trage mai multe deodată aici. Ordinea o schimbi trăgând de ele; cât de mare iese fiecare alege site-ul, după forma pozei. Cât timp e goală, pe pagină nu apare galeria.',
+      type: 'array',
+      options: {layout: 'grid'},
+      validation: (rule) => rule.max(40).error('Cel mult 40 de poze.'),
+      of: [
+        defineArrayMember({
+          name: 'galleryPhoto',
+          title: 'Poză',
+          type: 'image',
+          options: {hotspot: true},
+          fields: [
+            defineField({
+              name: 'alt',
+              title: 'Ce se vede în poză',
+              description:
+                'Pentru cine nu vede poza (cititoare de ecran). De ex. „Trei rame cu mozaic la uscat pe masă”.',
+              type: 'localeString',
+              validation: (rule) => requireLocales(rule),
+            }),
+          ],
         }),
       ],
     }),

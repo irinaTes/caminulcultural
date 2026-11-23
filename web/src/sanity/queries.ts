@@ -23,6 +23,19 @@ const PHOTO = /* groq */ `
   }
 `;
 
+/** A workshop's photo wall, with each photo's size for its shape on the wall. */
+const GALLERY = /* groq */ `
+  "gallery": gallery[defined(asset)] {
+    _key,
+    asset,
+    hotspot,
+    crop,
+    alt,
+    "lqip": asset->metadata.lqip,
+    "dimensions": asset->metadata.dimensions { width, height }
+  }
+`;
+
 /**
  * Visible workshops in the editor's order, each with its upcoming sessions.
  * Workshops with none are left off the board.
@@ -54,6 +67,7 @@ export const WORKSHOP_PAGE_QUERY = defineQuery(`
     durationHours,
     capacity,
     ${PHOTO},
+    ${GALLERY},
     ${UPCOMING_SESSIONS}
   }
 `);

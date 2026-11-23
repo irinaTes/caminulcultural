@@ -117,12 +117,12 @@ function render({
 <html><body style="margin:0;padding:24px;background:#F4ECDD;color:#1F206A;font-family:Georgia,serif;font-size:17px;line-height:1.5">
 <div style="max-width:560px;margin:0 auto">
 ${paragraphs.map(p).join("\n")}
-<p style="margin:22px 0 8px;font-family:monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#6E1F2F">${escapeHtml(heading)}</p>
+<p style="margin:22px 0 8px;font-family:monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#7A0F2E">${escapeHtml(heading)}</p>
 <table role="presentation" style="border-collapse:collapse;width:100%;margin-bottom:22px">
 ${rows
   .map(
     ([label, value]) =>
-      `<tr><td style="padding:6px 16px 6px 0;vertical-align:top;white-space:nowrap;color:#6E1F2F">${escapeHtml(label)}</td><td style="padding:6px 0;white-space:pre-line">${escapeHtml(value)}</td></tr>`,
+      `<tr><td style="padding:6px 16px 6px 0;vertical-align:top;white-space:nowrap;color:#7A0F2E">${escapeHtml(label)}</td><td style="padding:6px 0;white-space:pre-line">${escapeHtml(value)}</td></tr>`,
   )
   .join("\n")}
 </table>

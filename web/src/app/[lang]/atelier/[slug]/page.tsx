@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { BookingSection } from "@/components/sections/workshop/BookingSection";
+import { GallerySection } from "@/components/sections/workshop/gallery/GallerySection";
 import { WorkshopIntro } from "@/components/sections/workshop/WorkshopIntro";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Footer } from "@/components/site/Footer";
@@ -80,6 +81,7 @@ async function Workshop({ params }: Pick<Props, "params">) {
       <main id={sectionIds.content}>
         <WorkshopIntro workshop={workshop} />
         <BookingSection workshop={workshop} />
+        <GallerySection photos={workshop.gallery} />
       </main>
       <Footer />
       {workshop.sessions.length > 0 && (

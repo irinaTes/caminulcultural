@@ -1,0 +1,13 @@
+{
+  "name": "caminulcultural",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm --prefix web install && npm --prefix studio install",
+    "dev": "concurrently --names web,studio --prefix-colors yellow,magenta --kill-others-on-fail \"npm --prefix web run dev\" \"npm --prefix studio run dev\"",
+    "dev:web": "npm --prefix web run dev",
+    "dev:studio": "npm --prefix studio run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.5"
+  }
+}

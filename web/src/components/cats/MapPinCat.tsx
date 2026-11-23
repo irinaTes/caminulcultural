@@ -24,7 +24,7 @@ export function MapPinCat(props: SVGProps<SVGSVGElement>) {
       <ellipse cx="74" cy="60" rx="9" ry="6.5" fill="#E9B44C" />
       <path d="M46 54 Q49 60 46 66 Q43 60 46 54 Z" fill="#1F206A" />
       <path d="M74 54 Q77 60 74 66 Q71 60 74 54 Z" fill="#1F206A" />
-      <path d="M57 72 L63 72 L60 75 Z" fill="#6E1F2F" />
+      <path d="M57 72 L63 72 L60 75 Z" fill="#7A0F2E" />
       <path
         d="M60 100 C48 100 44 112 60 132 C76 112 72 100 60 100 Z"
         fill="#DF111F"

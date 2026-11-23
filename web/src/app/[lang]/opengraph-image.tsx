@@ -17,7 +17,7 @@ export default function OpenGraphImage() {
         alignItems: "center",
         justifyContent: "center",
         background:
-          "radial-gradient(circle at 50% 42%, #9A3A3A 0%, #6E1F2F 45%, #43101B 100%)",
+          "radial-gradient(circle at 50% 42%, #9A3A3A 0%, #7A0F2E 45%, #43101B 100%)",
       }}
     >
       <Logo color="#F4ECDD" width={420} height={390} />

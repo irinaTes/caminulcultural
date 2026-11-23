@@ -51,7 +51,7 @@ Sources of truth, in this order:
 | `navy-deep` | `#14154A` | silhouettes on dark (lamp, hidden cat) |
 | `cherry` | `#DF111F` | rare accents: poster verbs, the booking CTA |
 | `cream` | `#F4ECDD` | light background, text on dark |
-| `bordeaux` | `#6E1F2F` | hero, gift voucher |
+| `bordeaux` | `#7A0F2E` | hero, gift voucher |
 | `glow` | `#E9B44C` | light, primary buttons on dark, focus ring |
 | `drape-dark` → `drape` | `#43101B` → `#6A1E2E` | header gradient |
 | `cork`, `cork-frame`, `cork-frame-dark` | `#B7834F`, `#5E3D22`, `#3E2714` | poster board |

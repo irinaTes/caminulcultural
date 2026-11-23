@@ -17,6 +17,7 @@ import type {
   WORKSHOP_PAGE_QUERY_RESULT,
 } from "@/sanity/sanity.types";
 import type {
+  GalleryPhoto,
   Poster,
   SessionDay,
   SessionSlot,
@@ -49,7 +50,7 @@ export async function getPosterBoard(locale: Locale): Promise<Poster[]> {
   });
 
   return data.map((workshop, index) => {
-    const summary = toSummary(workshop, locale, { width: 800, height: 600 });
+    const summary = toSummary(workshop, locale, { width: 800, height: 800 });
     const dates = summary.days.slice(0, DAYS_PER_POSTER).map((d) => d.date);
     return {
       ...summary,
@@ -99,6 +100,47 @@ export async function getWorkshop(
     ...toSummary(data, locale, { width: 1200, height: 900 }),
     capacity: data.capacity,
     description: localizedBlocks(data.description, locale),
+    gallery: (data.gallery ?? []).map((photo) => toGalleryPhoto(photo, locale)),
+  };
+}
+
+/** The longest side the viewer asks for; Next.js scales down from it. */
+const GALLERY_MAX_SIZE = 2400;
+
+type GalleryResult = NonNullable<
+  NonNullable<WORKSHOP_PAGE_QUERY_RESULT>["gallery"]
+>[number];
+
+function toGalleryPhoto(photo: GalleryResult, locale: Locale): GalleryPhoto {
+  // The editor's crop changes the shape, so size the photo after it.
+  const crop = photo.crop;
+  const original = photo.dimensions ?? { width: 4, height: 3 };
+  const width =
+    (original.width ?? 4) * (1 - (crop?.left ?? 0) - (crop?.right ?? 0));
+  const height =
+    (original.height ?? 3) * (1 - (crop?.top ?? 0) - (crop?.bottom ?? 0));
+  const scale = Math.min(1, GALLERY_MAX_SIZE / Math.max(width, height));
+  // The hotspot is measured on the original photo; move it into the crop.
+  const left = crop?.left ?? 0;
+  const top = crop?.top ?? 0;
+  const keptX = 1 - left - (crop?.right ?? 0);
+  const keptY = 1 - top - (crop?.bottom ?? 0);
+  const percent = (value: number) =>
+    `${Math.round(Math.min(1, Math.max(0, value)) * 100)}%`;
+  const focusX = ((photo.hotspot?.x ?? 0.5) - left) / keptX;
+  const focusY = ((photo.hotspot?.y ?? 0.5) - top) / keptY;
+
+  return {
+    id: photo._key,
+    src: urlFor(photo)
+      .width(Math.round(width * scale))
+      .fit("max")
+      .url(),
+    alt: localized(photo.alt, locale),
+    width: Math.round(width * scale),
+    height: Math.round(height * scale),
+    lqip: photo.lqip,
+    focus: `${percent(focusX)} ${percent(focusY)}`,
   };
 }
 
