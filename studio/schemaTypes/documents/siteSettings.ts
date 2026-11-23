@@ -1,5 +1,6 @@
 import {CogIcon} from '@sanity/icons/Cog'
-import {defineField, defineType} from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
+import {requireLocales} from '../objects/localized'
 
 /** Singleton: the Studio structure opens it by its fixed id, `siteSettings`. */
 export const siteSettings = defineType({
@@ -9,6 +10,7 @@ export const siteSettings = defineType({
   icon: CogIcon,
   groups: [
     {name: 'contact', title: 'Contact', default: true},
+    {name: 'team', title: 'Echipa'},
     {name: 'company', title: 'Date firmă'},
     {name: 'extras', title: 'Diverse'},
   ],
@@ -53,6 +55,63 @@ export const siteSettings = defineType({
       group: 'contact',
       validation: (rule) =>
         rule.regex(/^[A-Za-z0-9._]{1,30}$/).error('Doar numele contului, fără @ și fără link.'),
+    }),
+    defineField({
+      name: 'team',
+      title: 'Echipa',
+      description:
+        'Portretele de pe „Panoul de onoare”, în secțiunea „Despre”. Trage de ele ca să schimbi ordinea. Cât timp e goală, pe site apar două rame cu [Nume].',
+      type: 'array',
+      group: 'team',
+      validation: (rule) => rule.max(6),
+      of: [
+        defineArrayMember({
+          name: 'teamMember',
+          title: 'Om din echipă',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'name',
+              title: 'Numele',
+              description: 'Cum vrei să apară, de ex. doar prenumele.',
+              type: 'string',
+              validation: (rule) => rule.required().error('Scrie numele.'),
+            }),
+            defineField({
+              name: 'role',
+              title: 'Rolul în Cămin',
+              description: 'Scurt, de ex. „Administratoarea” sau „Șefa de cerc”.',
+              type: 'localeString',
+              validation: (rule) => requireLocales(rule),
+            }),
+            defineField({
+              name: 'bio',
+              title: 'Câteva rânduri',
+              description: 'Două-trei propoziții. Mai mult nu încape pe panou.',
+              type: 'localeText',
+              validation: (rule) => requireLocales(rule),
+            }),
+            defineField({
+              name: 'photo',
+              title: 'Portretul',
+              description: 'Iese pătrat. Trage de cercul din poză ca să alegi ce rămâne la vedere.',
+              type: 'image',
+              options: {hotspot: true},
+              fields: [
+                defineField({
+                  name: 'alt',
+                  title: 'Ce se vede în poză',
+                  description: 'Pentru cine nu vede poza, de ex. „Râde, cu o pensulă după ureche”. Dacă e gol, pe site scrie doar numele.',
+                  type: 'localeString',
+                }),
+              ],
+            }),
+          ],
+          preview: {
+            select: {title: 'name', subtitle: 'role.ro', media: 'photo'},
+          },
+        }),
+      ],
     }),
     defineField({
       name: 'company',

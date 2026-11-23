@@ -59,6 +59,13 @@ export type LocaleString = {
   en?: string;
 };
 
+export type SanityImageAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+};
+
 export type SiteSettings = {
   _id: string;
   _type: "siteSettings";
@@ -70,12 +77,43 @@ export type SiteSettings = {
   email?: string;
   whatsapp?: string;
   instagram?: string;
+  team?: Array<{
+    name: string;
+    role?: LocaleString;
+    bio?: LocaleText;
+    photo?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: LocaleString;
+      _type: "image";
+    };
+    _type: "teamMember";
+    _key: string;
+  }>;
   company?: {
     legalName?: string;
     cui?: string;
     registrationNumber?: string;
   };
   promoCode?: string;
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x: number;
+  y: number;
+  height: number;
+  width: number;
 };
 
 export type WorkshopReference = {
@@ -111,13 +149,6 @@ export type Session = {
   status: "open" | "full" | "cancelled";
 };
 
-export type SanityImageAssetReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-};
-
 export type Workshop = {
   _id: string;
   _type: "workshop";
@@ -143,22 +174,6 @@ export type Workshop = {
   pinColor: "cherry" | "glow";
   hidden?: boolean;
   orderRank?: string;
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x: number;
-  y: number;
-  height: number;
-  width: number;
 };
 
 export type Slug = {
@@ -264,7 +279,7 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = LocaleBlockContent | LocaleText | LocaleString | SiteSettings | WorkshopReference | Review | Session | SanityImageAssetReference | Workshop | SanityImageCrop | SanityImageHotspot | Slug | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
+export type AllSanitySchemaTypes = LocaleBlockContent | LocaleText | LocaleString | SanityImageAssetReference | SiteSettings | SanityImageCrop | SanityImageHotspot | WorkshopReference | Review | Session | Workshop | Slug | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: POSTER_BOARD_QUERY
@@ -363,6 +378,23 @@ export type BOOKING_SESSION_QUERY_RESULT = {
 } | null;
 
 // Source: ../web/src/sanity/queries.ts
+// Variable: TEAM_QUERY
+// Query: *[_id == "siteSettings"][0].team[] {    _key,    name,    role,    bio,      "photo": photo {    asset,    hotspot,    crop,    alt,    "lqip": asset->metadata.lqip  }  }
+export type TEAM_QUERY_RESULT = Array<{
+  _key: string;
+  name: string;
+  role: LocaleString | null;
+  bio: LocaleText | null;
+  photo: {
+    asset: SanityImageAssetReference | null;
+    hotspot: SanityImageHotspot | null;
+    crop: SanityImageCrop | null;
+    alt: LocaleString | null;
+    lqip: string | null;
+  } | null;
+}> | null;
+
+// Source: ../web/src/sanity/queries.ts
 // Variable: SITE_SETTINGS_QUERY
 // Query: *[_id == "siteSettings"][0] {    address,    metroStation,    email,    whatsapp,    instagram,    company,    promoCode  }
 export type SITE_SETTINGS_QUERY_RESULT = {
@@ -396,6 +428,7 @@ declare global {
     "\n  *[_type == \"workshop\" && hidden != true] | order(orderRank) { _id, title }\n": WORKSHOP_NAMES_QUERY_RESULT;
     "\n  *[_type == \"review\" && published == true] | order(date desc)[0...8] {\n    _id,\n    firstName,\n    text,\n    language,\n    date\n  }\n": REVIEWS_QUERY_RESULT;
     "\n  *[_type == \"session\" && _id == $id][0] {\n    _id,\n    startsAt,\n    seatsLeft,\n    status,\n    \"workshop\": workshop-> { _id, title, price, capacity, hidden }\n  }\n": BOOKING_SESSION_QUERY_RESULT;
+    "\n  *[_id == \"siteSettings\"][0].team[] {\n    _key,\n    name,\n    role,\n    bio,\n    \n  \"photo\": photo {\n    asset,\n    hotspot,\n    crop,\n    alt,\n    \"lqip\": asset->metadata.lqip\n  }\n\n  }\n": TEAM_QUERY_RESULT;
     "\n  *[_id == \"siteSettings\"][0] {\n    address,\n    metroStation,\n    email,\n    whatsapp,\n    instagram,\n    company,\n    promoCode\n  }\n": SITE_SETTINGS_QUERY_RESULT;
   }
 }

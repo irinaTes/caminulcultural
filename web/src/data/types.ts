@@ -70,6 +70,15 @@ export type Review = {
   date: string;
 };
 
+export type TeamMember = {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  /** `alt` is empty when the editor left it blank; the UI then names the person. */
+  photo: WorkshopPhoto | null;
+};
+
 /** Contact and company details. Empty fields are null and show as placeholders. */
 export type SiteSettings = {
   address: string | null;

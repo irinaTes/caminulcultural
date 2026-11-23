@@ -20,6 +20,7 @@ export async function Header({ path = "/" }: HeaderProps) {
     { href: href(sectionIds.rent), label: t.rent },
     { href: href(sectionIds.gift), label: t.gift },
     { href: href(sectionIds.register), label: t.register },
+    { href: href(sectionIds.about), label: t.about },
     { href: href(sectionIds.directions), label: t.directions },
   ];
   const contact = { href: href(sectionIds.directions), label: t.contact };
@@ -72,7 +73,7 @@ export async function Header({ path = "/" }: HeaderProps) {
           </ul>
         </nav>
 
-        <div className="hidden items-center gap-6 lg:flex">
+        <div className="hidden shrink-0 items-center gap-6 lg:flex">
           {languageSwitch}
           <ButtonLink href={contact.href} variant="glow">
             {contact.label}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AboutSection } from "@/components/sections/about/AboutSection";
 import { DirectionsSection } from "@/components/sections/directions/DirectionsSection";
 import { GiftSection } from "@/components/sections/gift/GiftSection";
 import { Hero } from "@/components/sections/hero/Hero";
@@ -33,6 +34,7 @@ export default function Home() {
         <RentSection />
         <GiftSection />
         <RegisterSection />
+        <AboutSection />
         <DirectionsSection />
       </main>
       <Footer />

@@ -28,6 +28,7 @@ const ro = {
     rent: "Închiriază Căminul",
     gift: "Bilet de favoare",
     register: "Condica",
+    about: "Despre noi",
     directions: "Cum ajungi",
     contact: "Scrie-i administratoarei",
     openMenu: "Deschide meniul",
@@ -224,8 +225,48 @@ const ro = {
     placeholderFirst: "[recenzie reală, după primul atelier]",
     placeholder: "[recenzie reală]",
   },
+  about: {
+    label: "05 · Despre Cămin",
+    title: "Două surori,",
+    titleAccent: "un cămin.",
+    intro:
+      "Căminul Cultural 31 îl ținem noi două, surori. Noi aprindem lampa, noi turnăm vinul, noi spălăm pensulele la final. Restul serii e al tău.",
+    manifestoLabel: "Regulament de ordine interioară",
+    manifestoTitle: "Manifestul Căminului",
+    article: "Art. {n}",
+    articles: [
+      {
+        title: "Nu-i școală.",
+        text: "Nu dăm note, nu ținem lecții, nu verifică nimeni tema. Venim să ne jucăm, ca după ore.",
+      },
+      {
+        title: "„Nu știu să desenez” nu e scuză.",
+        text: "Arta naivă e făcută exact pentru cine zice asta. Strâmb e corect. Prea drept e suspect.",
+      },
+      {
+        title: "Cultura nu stă doar la muzeu.",
+        text: "Stă și la masa din cămin, între un pahar de vin și o pensulă.",
+      },
+      {
+        title: "Seara e a ta.",
+        text: "Lași ziua de lucru în cuier. Lampa o ținem noi aprinsă.",
+      },
+      {
+        title: "Se râde tare.",
+        text: "Mai ales de propriile capodopere.",
+      },
+    ],
+    signed: "Semnat și ștampilat, administrația",
+    stamp: "APROBAT",
+    boardTitle: "Panoul de onoare",
+    portraitAlt: "Portret: {name}",
+    photoPlaceholder: "[FOTO]",
+    namePlaceholder: "[Nume]",
+    rolePlaceholder: "[rolul în Cămin]",
+    bioPlaceholder: "[două-trei rânduri despre ea]",
+  },
   directions: {
-    label: "05 · Cum ajungi la Cămin",
+    label: "06 · Cum ajungi la Cămin",
     title: "București e mare. Nu te baza pe intuiție.",
     addressPlaceholder: "[ADRESA]",
     metro: "Metrou {station}",

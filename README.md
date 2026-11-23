@@ -60,7 +60,7 @@ The Studio is in Romanian; the names in quotes below are what you'll see there.
 - **Workshops ("Ateliere"):** title, verb, description, photo (with alt text), price, duration, capacity. Drag and drop to change their order on the poster board. "Ascuns" (hidden) takes a workshop off the site.
 - **Sessions ("Sesiuni"):** the workshop, date and time (Romanian time), seats left, status (open / full / cancelled). The site only shows sessions that haven't started yet.
 - **Reviews ("Recenzii"):** appear in the register ("Condica") only when "Apare pe site" (shown on site) is on.
-- **Site settings ("Setări site"):** address, metro station, email, WhatsApp, Instagram, company details, the hidden cat's promo code.
+- **Site settings ("Setări site"):** address, metro station, email, WhatsApp, Instagram, company details, the hidden cat's promo code, and the team ("Echipa": name, role, a few lines and a square portrait for each person on the honour board in the About section). The manifesto itself is site copy, in the dictionaries.
 
 Every text has a Romanian and an English field. If the English is missing, `/en` shows the Romanian text.
 
@@ -155,7 +155,7 @@ Deploy the Studio first (`npm run deploy`), then push the site if the queries ch
 
 - `app/[lang]/`: the pages: home, `atelier/[slug]`, the legal pages (`termeni`, `confidentialitate`, `anulare`, stubs for now), the share image.
 - `app/api/revalidate/`: the Sanity webhook. `app/sitemap.ts`, `app/robots.ts`, `app/icon.svg`: SEO and icons.
-- `components/sections/`: one folder per section (hero, poster board, rent, gift ticket, register, directions, workshop).
+- `components/sections/`: one folder per section (hero, poster board, rent, gift ticket, register, about, directions, workshop).
 - `components/ui/`, `components/site/`, `components/cats/`: reusable pieces, header/footer, the cat SVGs.
 - `data/`: loading data from Sanity (cached) and the UI types.
 - `booking/`: bookings (Server Action, validation, emails).

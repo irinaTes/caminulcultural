@@ -11,6 +11,7 @@ export const sectionIds = {
   rent: "inchiriaza",
   gift: "bilet",
   register: "condica",
+  about: "despre",
   directions: "drum",
 } as const;
 

@@ -89,6 +89,17 @@ export const BOOKING_SESSION_QUERY = defineQuery(`
   }
 `);
 
+/** The people on the honour board, in the editor's order. */
+export const TEAM_QUERY = defineQuery(`
+  *[_id == "siteSettings"][0].team[] {
+    _key,
+    name,
+    role,
+    bio,
+    ${PHOTO}
+  }
+`);
+
 export const SITE_SETTINGS_QUERY = defineQuery(`
   *[_id == "siteSettings"][0] {
     address,

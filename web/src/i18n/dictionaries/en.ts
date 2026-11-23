@@ -30,6 +30,7 @@ const en: Dictionary = {
     rent: "Rent the Cămin",
     gift: "Gift Ticket",
     register: "The Register",
+    about: "About us",
     directions: "Getting Here",
     contact: "Write to the caretaker",
     openMenu: "Open menu",
@@ -230,8 +231,48 @@ const en: Dictionary = {
     placeholderFirst: "[a real review, after the first workshop]",
     placeholder: "[a real review]",
   },
+  about: {
+    label: "05 · About the Cămin",
+    title: "Two sisters,",
+    titleAccent: "one Cămin.",
+    intro:
+      "Căminul Cultural 31 is run by the two of us, sisters. We light the lamp, we pour the wine, we wash the brushes at the end. The rest of the evening is yours.",
+    manifestoLabel: "House rules",
+    manifestoTitle: "The Cămin manifesto",
+    article: "Art. {n}",
+    articles: [
+      {
+        title: "It's not school.",
+        text: "No grades, no lectures, nobody checks your homework. We come here to play, like after class.",
+      },
+      {
+        title: "“I can't draw” is not an excuse.",
+        text: "Naive art was made for exactly the people who say that. Wonky is correct. Too straight is suspicious.",
+      },
+      {
+        title: "Culture doesn't only live in museums.",
+        text: "It also lives at the table in the Cămin, between a glass of wine and a brush.",
+      },
+      {
+        title: "The evening is yours.",
+        text: "Hang the workday up by the door. We'll keep the lamp on.",
+      },
+      {
+        title: "Laughing out loud is allowed.",
+        text: "Especially at your own masterpieces.",
+      },
+    ],
+    signed: "Signed and stamped, the management",
+    stamp: "APPROVED",
+    boardTitle: "Honour board",
+    portraitAlt: "Portrait: {name}",
+    photoPlaceholder: "[PHOTO]",
+    namePlaceholder: "[Name]",
+    rolePlaceholder: "[role at the Cămin]",
+    bioPlaceholder: "[two or three lines about her]",
+  },
   directions: {
-    label: "05 · Getting to the Cămin",
+    label: "06 · Getting to the Cămin",
     title: "Bucharest is big. Don't trust your gut.",
     addressPlaceholder: "[ADRESA]",
     metro: "{station} metro",
