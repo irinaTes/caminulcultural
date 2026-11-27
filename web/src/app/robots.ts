@@ -10,7 +10,13 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/dev", "/en/dev"],
+      disallow: [
+        "/api/",
+        "/dev",
+        "/en/dev",
+        "/condica/afis",
+        "/en/condica/afis",
+      ],
     },
     sitemap: absoluteUrl("/sitemap.xml"),
   };

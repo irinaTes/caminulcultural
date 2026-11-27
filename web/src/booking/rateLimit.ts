@@ -1,4 +1,5 @@
 import "server-only";
+import { headers } from "next/headers";
 
 /**
  * A simple per-visitor limit: at most LIMIT requests in WINDOW_MS.
@@ -11,6 +12,19 @@ const LIMIT = 5;
 const WINDOW_MS = 10 * 60 * 1000;
 
 const hits = new Map<string, number[]>();
+
+/**
+ * Who's asking: the visitor's IP as Vercel reports it. Prefix it per form
+ * ("review:…") so each form has its own limit.
+ */
+export async function visitorId() {
+  const requestHeaders = await headers();
+  return (
+    requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    requestHeaders.get("x-real-ip") ||
+    "unknown"
+  );
+}
 
 /** Records a request from `key` and says whether it's within the limit. */
 export function allowRequest(key: string, now = Date.now()) {

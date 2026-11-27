@@ -134,7 +134,36 @@ export type Review = {
   language: "ro" | "en";
   date: string;
   workshop?: WorkshopReference;
+  source?: "site" | "manual";
   published?: boolean;
+};
+
+export type SessionReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "session";
+};
+
+export type Booking = {
+  _id: string;
+  _type: "booking";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  status: "pending" | "confirmed" | "declined" | "cancelled";
+  session: SessionReference;
+  people: number;
+  name: string;
+  email?: string;
+  phone?: string;
+  note?: string;
+  staffNote?: string;
+  source?: "site" | "manual";
+  lang?: "ro" | "en";
+  notifiedStatus?: "pending" | "confirmed" | "declined" | "cancelled";
+  notifiedAt?: string;
+  receivedAt?: string;
 };
 
 export type Session = {
@@ -145,7 +174,7 @@ export type Session = {
   _rev: string;
   workshop: WorkshopReference;
   startsAt: string;
-  seatsLeft?: number;
+  capacity?: number;
   status: "open" | "full" | "cancelled";
 };
 
@@ -288,11 +317,11 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = LocaleBlockContent | LocaleText | LocaleString | SanityImageAssetReference | SiteSettings | SanityImageCrop | SanityImageHotspot | WorkshopReference | Review | Session | Workshop | Slug | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
+export type AllSanitySchemaTypes = LocaleBlockContent | LocaleText | LocaleString | SanityImageAssetReference | SiteSettings | SanityImageCrop | SanityImageHotspot | WorkshopReference | Review | SessionReference | Booking | Session | Workshop | Slug | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: POSTER_BOARD_QUERY
-// Query: *[_type == "workshop" && hidden != true] | order(orderRank) {    _id,    "slug": slug.current,    title,    verb,    shortLine,    price,    durationHours,    pinColor,      "photo": photo {    asset,    hotspot,    crop,    alt,    "lqip": asset->metadata.lqip  },      "sessions": *[    _type == "session"    && workshop._ref == ^._id    && status != "cancelled"    && dateTime(startsAt) > dateTime($now)  ] | order(startsAt asc) { _id, startsAt, seatsLeft, status }  }[count(sessions) > 0]
+// Query: *[_type == "workshop" && hidden != true] | order(orderRank) {    _id,    "slug": slug.current,    title,    verb,    shortLine,    price,    durationHours,    capacity,    pinColor,      "photo": photo {    asset,    hotspot,    crop,    alt,    "lqip": asset->metadata.lqip  },      "sessions": *[    _type == "session"    && workshop._ref == ^._id    && status != "cancelled"    && dateTime(startsAt) > dateTime($now)  ] | order(startsAt asc) { _id, startsAt, capacity, status }  }[count(sessions) > 0]
 export type POSTER_BOARD_QUERY_RESULT = Array<{
   _id: string;
   slug: string;
@@ -301,6 +330,7 @@ export type POSTER_BOARD_QUERY_RESULT = Array<{
   shortLine: LocaleText | null;
   price: number | null;
   durationHours: number;
+  capacity: number | null;
   pinColor: "cherry" | "glow";
   photo: {
     asset: SanityImageAssetReference | null;
@@ -312,14 +342,14 @@ export type POSTER_BOARD_QUERY_RESULT = Array<{
   sessions: Array<{
     _id: string;
     startsAt: string;
-    seatsLeft: number | null;
+    capacity: number | null;
     status: "cancelled" | "full" | "open";
   }>;
 }>;
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: WORKSHOP_PAGE_QUERY
-// Query: *[_type == "workshop" && slug.current == $slug && hidden != true][0] {    _id,    "slug": slug.current,    title,    verb,    shortLine,    description,    price,    durationHours,    capacity,      "photo": photo {    asset,    hotspot,    crop,    alt,    "lqip": asset->metadata.lqip  },      "gallery": gallery[defined(asset)] {    _key,    asset,    hotspot,    crop,    alt,    "lqip": asset->metadata.lqip,    "dimensions": asset->metadata.dimensions { width, height }  },      "sessions": *[    _type == "session"    && workshop._ref == ^._id    && status != "cancelled"    && dateTime(startsAt) > dateTime($now)  ] | order(startsAt asc) { _id, startsAt, seatsLeft, status }  }
+// Query: *[_type == "workshop" && slug.current == $slug && hidden != true][0] {    _id,    "slug": slug.current,    title,    verb,    shortLine,    description,    price,    durationHours,    capacity,      "photo": photo {    asset,    hotspot,    crop,    alt,    "lqip": asset->metadata.lqip  },      "gallery": gallery[defined(asset)] {    _key,    asset,    hotspot,    crop,    alt,    "lqip": asset->metadata.lqip,    "dimensions": asset->metadata.dimensions { width, height }  },      "sessions": *[    _type == "session"    && workshop._ref == ^._id    && status != "cancelled"    && dateTime(startsAt) > dateTime($now)  ] | order(startsAt asc) { _id, startsAt, capacity, status }  }
 export type WORKSHOP_PAGE_QUERY_RESULT = {
   _id: string;
   slug: string;
@@ -352,7 +382,7 @@ export type WORKSHOP_PAGE_QUERY_RESULT = {
   sessions: Array<{
     _id: string;
     startsAt: string;
-    seatsLeft: number | null;
+    capacity: number | null;
     status: "cancelled" | "full" | "open";
   }>;
 } | null;
@@ -364,9 +394,10 @@ export type WORKSHOP_SLUGS_QUERY_RESULT = Array<string>;
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: WORKSHOP_NAMES_QUERY
-// Query: *[_type == "workshop" && hidden != true] | order(orderRank) { _id, title }
+// Query: *[_type == "workshop" && hidden != true] | order(orderRank) {    _id,    "slug": slug.current,    title  }
 export type WORKSHOP_NAMES_QUERY_RESULT = Array<{
   _id: string;
+  slug: string;
   title: LocaleString | null;
 }>;
 
@@ -383,18 +414,45 @@ export type REVIEWS_QUERY_RESULT = Array<{
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: BOOKING_SESSION_QUERY
-// Query: *[_type == "session" && _id == $id][0] {    _id,    startsAt,    seatsLeft,    status,    "workshop": workshop-> { _id, title, price, capacity, hidden }  }
+// Query: *[_type == "session" && _id == $id][0] {    _id,    startsAt,    capacity,    status,    "taken": math::sum(*[_type == "booking" && session._ref == ^._id && status in ["pending", "confirmed"]].people),    "workshop": workshop-> { _id, title, price, capacity, hidden }  }
 export type BOOKING_SESSION_QUERY_RESULT = {
   _id: string;
   startsAt: string;
-  seatsLeft: number | null;
+  capacity: number | null;
   status: "cancelled" | "full" | "open";
+  taken: number;
   workshop: {
     _id: string;
     title: LocaleString | null;
     price: number | null;
     capacity: number | null;
     hidden: boolean | null;
+  };
+} | null;
+
+// Source: ../web/src/sanity/queries.ts
+// Variable: TAKEN_SEATS_QUERY
+// Query: *[_type == "booking" && session._ref in $ids && status in ["pending", "confirmed"]] {    "session": session._ref,    people  }
+export type TAKEN_SEATS_QUERY_RESULT = Array<{
+  session: string;
+  people: number;
+}>;
+
+// Source: ../web/src/sanity/queries.ts
+// Variable: BOOKING_NOTICE_QUERY
+// Query: *[_type == "booking" && _id == $id][0] {    _id,    status,    notifiedStatus,    people,    name,    email,    lang,    "startsAt": session->startsAt,    "workshop": session->workshop-> { title, price }  }
+export type BOOKING_NOTICE_QUERY_RESULT = {
+  _id: string;
+  status: "cancelled" | "confirmed" | "declined" | "pending";
+  notifiedStatus: "cancelled" | "confirmed" | "declined" | "pending" | null;
+  people: number;
+  name: string;
+  email: string | null;
+  lang: "en" | "ro" | null;
+  startsAt: string;
+  workshop: {
+    title: LocaleString | null;
+    price: number | null;
   };
 } | null;
 
@@ -427,6 +485,14 @@ export type SITE_SETTINGS_QUERY_RESULT = {
   company: null;
   promoCode: null;
 } | {
+  address: null;
+  metroStation: null;
+  email: string | null;
+  whatsapp: null;
+  instagram: null;
+  company: null;
+  promoCode: null;
+} | {
   address: string | null;
   metroStation: string | null;
   email: string | null;
@@ -443,12 +509,14 @@ export type SITE_SETTINGS_QUERY_RESULT = {
 // Query TypeMap
 declare global {
   interface SanityQueries {
-    "\n  *[_type == \"workshop\" && hidden != true] | order(orderRank) {\n    _id,\n    \"slug\": slug.current,\n    title,\n    verb,\n    shortLine,\n    price,\n    durationHours,\n    pinColor,\n    \n  \"photo\": photo {\n    asset,\n    hotspot,\n    crop,\n    alt,\n    \"lqip\": asset->metadata.lqip\n  }\n,\n    \n  \"sessions\": *[\n    _type == \"session\"\n    && workshop._ref == ^._id\n    && status != \"cancelled\"\n    && dateTime(startsAt) > dateTime($now)\n  ] | order(startsAt asc) { _id, startsAt, seatsLeft, status }\n\n  }[count(sessions) > 0]\n": POSTER_BOARD_QUERY_RESULT;
-    "\n  *[_type == \"workshop\" && slug.current == $slug && hidden != true][0] {\n    _id,\n    \"slug\": slug.current,\n    title,\n    verb,\n    shortLine,\n    description,\n    price,\n    durationHours,\n    capacity,\n    \n  \"photo\": photo {\n    asset,\n    hotspot,\n    crop,\n    alt,\n    \"lqip\": asset->metadata.lqip\n  }\n,\n    \n  \"gallery\": gallery[defined(asset)] {\n    _key,\n    asset,\n    hotspot,\n    crop,\n    alt,\n    \"lqip\": asset->metadata.lqip,\n    \"dimensions\": asset->metadata.dimensions { width, height }\n  }\n,\n    \n  \"sessions\": *[\n    _type == \"session\"\n    && workshop._ref == ^._id\n    && status != \"cancelled\"\n    && dateTime(startsAt) > dateTime($now)\n  ] | order(startsAt asc) { _id, startsAt, seatsLeft, status }\n\n  }\n": WORKSHOP_PAGE_QUERY_RESULT;
+    "\n  *[_type == \"workshop\" && hidden != true] | order(orderRank) {\n    _id,\n    \"slug\": slug.current,\n    title,\n    verb,\n    shortLine,\n    price,\n    durationHours,\n    capacity,\n    pinColor,\n    \n  \"photo\": photo {\n    asset,\n    hotspot,\n    crop,\n    alt,\n    \"lqip\": asset->metadata.lqip\n  }\n,\n    \n  \"sessions\": *[\n    _type == \"session\"\n    && workshop._ref == ^._id\n    && status != \"cancelled\"\n    && dateTime(startsAt) > dateTime($now)\n  ] | order(startsAt asc) { _id, startsAt, capacity, status }\n\n  }[count(sessions) > 0]\n": POSTER_BOARD_QUERY_RESULT;
+    "\n  *[_type == \"workshop\" && slug.current == $slug && hidden != true][0] {\n    _id,\n    \"slug\": slug.current,\n    title,\n    verb,\n    shortLine,\n    description,\n    price,\n    durationHours,\n    capacity,\n    \n  \"photo\": photo {\n    asset,\n    hotspot,\n    crop,\n    alt,\n    \"lqip\": asset->metadata.lqip\n  }\n,\n    \n  \"gallery\": gallery[defined(asset)] {\n    _key,\n    asset,\n    hotspot,\n    crop,\n    alt,\n    \"lqip\": asset->metadata.lqip,\n    \"dimensions\": asset->metadata.dimensions { width, height }\n  }\n,\n    \n  \"sessions\": *[\n    _type == \"session\"\n    && workshop._ref == ^._id\n    && status != \"cancelled\"\n    && dateTime(startsAt) > dateTime($now)\n  ] | order(startsAt asc) { _id, startsAt, capacity, status }\n\n  }\n": WORKSHOP_PAGE_QUERY_RESULT;
     "\n  *[_type == \"workshop\" && hidden != true && defined(slug.current)].slug.current\n": WORKSHOP_SLUGS_QUERY_RESULT;
-    "\n  *[_type == \"workshop\" && hidden != true] | order(orderRank) { _id, title }\n": WORKSHOP_NAMES_QUERY_RESULT;
+    "\n  *[_type == \"workshop\" && hidden != true] | order(orderRank) {\n    _id,\n    \"slug\": slug.current,\n    title\n  }\n": WORKSHOP_NAMES_QUERY_RESULT;
     "\n  *[_type == \"review\" && published == true] | order(date desc)[0...8] {\n    _id,\n    firstName,\n    text,\n    language,\n    date\n  }\n": REVIEWS_QUERY_RESULT;
-    "\n  *[_type == \"session\" && _id == $id][0] {\n    _id,\n    startsAt,\n    seatsLeft,\n    status,\n    \"workshop\": workshop-> { _id, title, price, capacity, hidden }\n  }\n": BOOKING_SESSION_QUERY_RESULT;
+    "\n  *[_type == \"session\" && _id == $id][0] {\n    _id,\n    startsAt,\n    capacity,\n    status,\n    \"taken\": math::sum(*[_type == \"booking\" && session._ref == ^._id && status in [\"pending\", \"confirmed\"]].people),\n    \"workshop\": workshop-> { _id, title, price, capacity, hidden }\n  }\n": BOOKING_SESSION_QUERY_RESULT;
+    "\n  *[_type == \"booking\" && session._ref in $ids && status in [\"pending\", \"confirmed\"]] {\n    \"session\": session._ref,\n    people\n  }\n": TAKEN_SEATS_QUERY_RESULT;
+    "\n  *[_type == \"booking\" && _id == $id][0] {\n    _id,\n    status,\n    notifiedStatus,\n    people,\n    name,\n    email,\n    lang,\n    \"startsAt\": session->startsAt,\n    \"workshop\": session->workshop-> { title, price }\n  }\n": BOOKING_NOTICE_QUERY_RESULT;
     "\n  *[_id == \"siteSettings\"][0].team[] {\n    _key,\n    name,\n    role,\n    bio,\n    \n  \"photo\": photo {\n    asset,\n    hotspot,\n    crop,\n    alt,\n    \"lqip\": asset->metadata.lqip\n  }\n\n  }\n": TEAM_QUERY_RESULT;
     "\n  *[_id == \"siteSettings\"][0] {\n    address,\n    metroStation,\n    email,\n    whatsapp,\n    instagram,\n    company,\n    promoCode\n  }\n": SITE_SETTINGS_QUERY_RESULT;
   }

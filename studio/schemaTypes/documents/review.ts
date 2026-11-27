@@ -53,6 +53,19 @@ export const review = defineType({
       options: {disableNew: true},
     }),
     defineField({
+      name: 'source',
+      title: 'De unde',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Formularul condicii (QR)', value: 'site'},
+          {title: 'Adăugată de mână', value: 'manual'},
+        ],
+      },
+      readOnly: true,
+      hidden: ({value}) => !value,
+    }),
+    defineField({
       name: 'published',
       title: 'Apare pe site',
       description: 'Pornește-l după ce ai citit-o.',

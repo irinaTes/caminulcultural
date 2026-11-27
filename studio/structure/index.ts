@@ -3,6 +3,7 @@ import {CogIcon} from '@sanity/icons/Cog'
 import {CommentIcon} from '@sanity/icons/Comment'
 import {orderableDocumentListDeskItem} from '@sanity/orderable-document-list'
 import type {StructureResolver} from 'sanity/structure'
+import {bookingsItem} from './bookings'
 
 const apiVersion = '2026-10-22'
 
@@ -50,6 +51,8 @@ export const structure: StructureResolver = (S, context) =>
               S.documentTypeListItem('session').title('Toate sesiunile'),
             ]),
         ),
+
+      bookingsItem(S, context),
 
       S.listItem()
         .title('Recenzii')

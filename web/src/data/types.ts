@@ -19,7 +19,7 @@ export type SessionSlot = {
   date: string;
   /** "19:30", Bucharest time. */
   time: string;
-  /** null when the editor doesn't track seats for it. */
+  /** Free seats after bookings; null when neither session nor workshop has a limit. */
   seatsLeft: number | null;
   full: boolean;
 };
@@ -74,7 +74,7 @@ export type WorkshopDetail = WorkshopSummary & {
 };
 
 /** A workshop's id and display name, for pickers that don't need the rest. */
-export type WorkshopName = { id: string; name: string };
+export type WorkshopName = { id: string; slug: string | null; name: string };
 
 export type Review = {
   id: string;

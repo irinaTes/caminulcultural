@@ -154,6 +154,29 @@ const ro = {
       "Dacă vrei să schimbi ceva, răspunde la mailul ăsta. Ne vedem la Cămin!",
     signature: "Căminul Cultural 31",
   },
+  bookingStatusEmail: {
+    confirmed: {
+      subject: "Ți-am confirmat locul: {workshop}, {when}",
+      intro:
+        "Gata, locul tău e confirmat. Lampa o aprindem noi, tu vino doar cu chef.",
+      outro:
+        "Dacă nu mai poți ajunge, răspunde la mailul ăsta, ca să dăm locul altcuiva. Ne vedem la Cămin!",
+    },
+    declined: {
+      subject: "N-am putut să-ți păstrăm locul: {workshop}, {when}",
+      intro:
+        "Ne pare rău, de data asta n-am putut să-ți confirmăm locul. Pe afișier mai sunt și alte seri.",
+      outro: "Răspunde la mailul ăsta și găsim împreună o dată care merge.",
+    },
+    cancelled: {
+      subject: "Rezervarea ta e anulată: {workshop}, {when}",
+      intro: "Rezervarea de mai jos e anulată, iar locurile s-au eliberat.",
+      outro: "Dacă e o greșeală sau vrei altă dată, răspunde la mailul ăsta.",
+    },
+    details: "Rezervarea ta",
+    where: "Unde",
+    metro: "Metrou",
+  },
   contact: {
     workshopPhrase: "atelierul de {name}",
     anyWorkshop: "un atelier ales împreună",
@@ -233,6 +256,46 @@ const ro = {
     placeholderName: "[prenumele]",
     placeholderFirst: "[recenzie reală, după primul atelier]",
     placeholder: "[recenzie reală]",
+    cta: "Ai fost la noi? Scrie și tu în condică",
+  },
+  reviewForm: {
+    metaTitle: "Semnează condica",
+    metaDescription:
+      "Ai fost la o seară la Căminul Cultural 31? Lasă-ne un rând în condică.",
+    label: "Condica",
+    title: "Semnează condica",
+    intro:
+      "Ai fost la o seară la Cămin? Lasă-ne un rând. Îl citim, plângem puțin, apoi îl lipim în condica de pe site.",
+    firstName: "Prenumele tău",
+    workshop: "La ce atelier ai fost?",
+    workshopNone: "Nu mai știu sau altul",
+    text: "Cum a fost?",
+    textHint: "Până la 600 de caractere. Fără linkuri, te rugăm.",
+    submit: "Semnează cu lăbuța",
+    sending: "Semnăm…",
+    errorName: "Scrie-ne doar prenumele, fără linkuri.",
+    errorText:
+      "Scrie-ne măcar o propoziție, fără linkuri și sub 600 de caractere.",
+    errorRate:
+      "Ai scris de multe ori în câteva minute. Mai încearcă puțin mai târziu.",
+    errorSend:
+      "N-am reușit să-ți salvăm rândul. Mai încearcă o dată sau scrie-ne direct.",
+    sentTitle: "Mulțumim!",
+    sentText:
+      "Am primit rândul tău. După ce-l citim, îl găsești în condica de pe site.",
+    seeRegister: "Vezi condica",
+    poster: {
+      metaTitle: "Afiș pentru condică",
+      title: "Semnează condica",
+      text: "Scanează și spune-ne cum a fost seara.",
+      forWorkshop: "Atelierul de {name}",
+      qrLabel: "Cod QR către formularul condicii: {url}",
+      print: "Printează afișul",
+      pickWorkshop: "Afiș pentru un anumit atelier",
+      anyWorkshop: "Pentru orice atelier",
+      printHint:
+        "Pagină de printat (A5). QR-ul duce la adresa de mai jos; printează-l după ce site-ul are domeniul final.",
+    },
   },
   about: {
     label: "05 · Despre Cămin",

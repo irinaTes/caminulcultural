@@ -47,6 +47,20 @@ export function bookingHref(
   return `${path}?${query}`;
 }
 
+/** The guest book form, opened from the QR code on the tables: "/condica". */
+export const reviewPath = "/condica";
+/** The printable sheet with that QR code. */
+export const reviewPosterPath = "/condica/afis";
+/** "/condica?atelier=mozaic" preselects the workshop. */
+export const reviewParams = { workshop: "atelier" } as const;
+
+export function reviewHref(locale: Locale, slug?: string | null) {
+  const path = localizedPath(locale, reviewPath);
+  return slug
+    ? `${path}?${new URLSearchParams({ [reviewParams.workshop]: slug })}`
+    : path;
+}
+
 /** Sessions, dates and opening hours are all in Bucharest time. */
 export const siteTimeZone = "Europe/Bucharest";
 
@@ -59,3 +73,10 @@ export const legalPaths = {
   privacy: "/confidentialitate",
   cancellation: "/anulare",
 } as const;
+
+/** The deployed Studio (studio/sanity.cli.ts → studioHost). */
+export const studioUrl = "https://caminulcultural31.sanity.studio";
+
+/** Opens one document in the Studio, whatever list it's in. */
+export const studioDocumentUrl = (id: string, type: string) =>
+  `${studioUrl}/intent/edit/id=${encodeURIComponent(id)};type=${type}`;

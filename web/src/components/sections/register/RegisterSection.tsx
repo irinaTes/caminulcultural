@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { PawPrint, SleepingCat } from "@/components/cats";
+import { buttonClasses } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { sectionIds } from "@/config/site";
+import { reviewHref, sectionIds } from "@/config/site";
 import { getReviews } from "@/data/reviews";
 import { intlLocales } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
@@ -165,6 +167,16 @@ export async function RegisterSection() {
             ))}
           </ol>
         </div>
+
+        <Link
+          href={reviewHref(locale)}
+          className={cn(
+            buttonClasses({ variant: "outline-navy", size: "lg" }),
+            "mt-4 self-start",
+          )}
+        >
+          {t.cta}
+        </Link>
       </div>
     </section>
   );

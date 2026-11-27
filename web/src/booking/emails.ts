@@ -1,9 +1,11 @@
 import "server-only";
-import { siteTimeZone } from "@/config/site";
+import { siteTimeZone, studioDocumentUrl } from "@/config/site";
 import { intlLocales } from "@/i18n/config";
 import { getDictionaryFor } from "@/i18n/dictionaries";
 import { fill, plural } from "@/i18n/format";
 import { longDateTime } from "@/lib/dates";
+import type { Locale } from "@/i18n/config";
+import type { SiteSettings } from "@/data/types";
 import type { BookingInput } from "./schema";
 import type { BookableSession } from "./session";
 
@@ -14,7 +16,7 @@ export type Email = {
   replyTo?: string;
 };
 
-type Row = [label: string, value: string];
+export type Row = [label: string, value: string];
 
 /** The confirmation the customer gets, in the language they booked in. */
 export async function customerEmail(
@@ -48,6 +50,7 @@ export async function customerEmail(
 export async function staffEmail(
   input: BookingInput,
   session: BookableSession,
+  bookingId: string,
 ): Promise<Email> {
   const dict = await getDictionaryFor("ro");
   const intl = intlLocales.ro;
@@ -74,14 +77,74 @@ export async function staffEmail(
         ["Telefon", input.phone],
         ["Nota", input.note || "–"],
         ["Limba site-ului", input.lang === "ro" ? "română" : "engleză"],
-        ["ID sesiune", session.id],
+        ["În Studio", studioDocumentUrl(bookingId, "booking")],
       ],
       closing: [
-        "Locurile nu scad singure: după ce confirmi, actualizează „Locuri rămase” la sesiune în Studio.",
+        "Rezervarea e în Studio, la Rezervări → De confirmat, și ține deja locurile. După ce vorbești cu clientul, schimbă-i starea în Confirmată. Dacă o refuzi sau o anulează, locurile se eliberează singure pe site.",
       ],
     }),
     replyTo: input.email,
   };
+}
+
+/** Statuses the customer hears about, once each. */
+export const NOTIFIED_STATUSES = [
+  "confirmed",
+  "declined",
+  "cancelled",
+] as const;
+export type NotifiedStatus = (typeof NOTIFIED_STATUSES)[number];
+
+/**
+ * Tells the customer we confirmed, declined or cancelled their booking, in
+ * the language they booked in. A confirmation also says where to come.
+ */
+export async function statusEmail(
+  booking: {
+    status: NotifiedStatus;
+    name: string;
+    people: number;
+    lang: Locale;
+    startsAt: string;
+    workshop: string;
+    priceLei: number | null;
+  },
+  settings: Pick<SiteSettings, "address" | "metroStation">,
+): Promise<Email> {
+  const dict = await getDictionaryFor(booking.lang);
+  const t = dict.bookingStatusEmail;
+  const copy = t[booking.status];
+  const intl = intlLocales[booking.lang];
+  const when = longDateTime(booking.startsAt, intl, siteTimeZone);
+
+  const rows: Row[] = [
+    [dict.bookingEmail.workshop, booking.workshop],
+    [dict.bookingEmail.when, when],
+    [
+      dict.bookingEmail.people,
+      plural(dict.workshop.peopleCount, booking.people, intl),
+    ],
+  ];
+  if (booking.status === "confirmed") {
+    rows.push([
+      dict.bookingEmail.total,
+      total(booking.people, booking.priceLei, dict.workshop.totalValue),
+    ]);
+    // Left out until they're filled in: no placeholders in a customer's inbox.
+    if (settings.address) rows.push([t.where, settings.address]);
+    if (settings.metroStation) rows.push([t.metro, settings.metroStation]);
+  }
+
+  return render({
+    subject: fill(copy.subject, { workshop: booking.workshop, when }),
+    paragraphs: [
+      fill(dict.bookingEmail.greeting, { name: booking.name }),
+      copy.intro,
+    ],
+    heading: t.details,
+    rows,
+    closing: [copy.outro, dict.bookingEmail.signature],
+  });
 }
 
 function total(people: number, priceLei: number | null, template: string) {
@@ -90,7 +153,7 @@ function total(people: number, priceLei: number | null, template: string) {
 }
 
 /** Plain text plus a simple HTML version in the site's colours. */
-function render({
+export function render({
   subject,
   paragraphs,
   heading,

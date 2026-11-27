@@ -4,9 +4,9 @@ The website of Căminul Cultural 31: naive-art workshops in Bucharest, in the ev
 
 The repo holds two apps that share the same Sanity data (project `r3j22rbn`, dataset `production`):
 
-| Folder | What it is | Local | Production |
-|---|---|---|---|
-| `web/` | The site: Next.js 16, Tailwind v4 | http://localhost:3000 | Vercel |
+| Folder    | What it is                             | Local                 | Production             |
+| --------- | -------------------------------------- | --------------------- | ---------------------- |
+| `web/`    | The site: Next.js 16, Tailwind v4      | http://localhost:3000 | Vercel                 |
 | `studio/` | Sanity Studio, where content is edited | http://localhost:3333 | `<name>.sanity.studio` |
 
 ## Requirements
@@ -50,15 +50,16 @@ Open http://localhost:3333. Whatever you publish there shows up on the local sit
 
 ## Environment variables (`web/.env.local`)
 
-| Variable | Required | What it does |
-|---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | once there's a domain | The public address, e.g. `https://caminulcultural31.ro`, used for canonical links, the sitemap and share previews. Read at build time. Until it's set, Vercel's production URL is used. |
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` | yes | `r3j22rbn` |
-| `NEXT_PUBLIC_SANITY_DATASET` | yes | `production` |
-| `RESEND_API_KEY` | in production | Resend key for the booking emails. Without it, `npm run dev` prints the emails in the terminal instead of sending them, and production refuses bookings. |
-| `BOOKING_FROM_EMAIL` | in production | The sender, on a domain verified in Resend, e.g. `Căminul Cultural 31 <rezervari@your-domain.ro>`. |
-| `BOOKING_TO_EMAIL` | no | Where booking requests go. If empty, the email from "Setări site" (Site settings) in the Studio is used. |
-| `SANITY_REVALIDATE_SECRET` | in production | Shared secret of the Sanity webhook below. Any long random string, e.g. from `openssl rand -hex 32`. |
+| Variable                        | Required              | What it does                                                                                                                                                                                                                  |
+| ------------------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`          | once there's a domain | The public address, e.g. `https://caminulcultural31.ro`, used for canonical links, the sitemap and share previews. Read at build time. Until it's set, Vercel's production URL is used.                                       |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | yes                   | `r3j22rbn`                                                                                                                                                                                                                    |
+| `NEXT_PUBLIC_SANITY_DATASET`    | yes                   | `production`                                                                                                                                                                                                                  |
+| `RESEND_API_KEY`                | in production         | Resend key for the booking emails. Without it, `npm run dev` prints the emails in the terminal instead of sending them, and production refuses bookings.                                                                      |
+| `BOOKING_FROM_EMAIL`            | in production         | The sender, on a domain verified in Resend, e.g. `Căminul Cultural 31 <rezervari@your-domain.ro>`.                                                                                                                            |
+| `BOOKING_TO_EMAIL`              | no                    | Where booking requests go. If empty, the email from "Setări site" (Site settings) in the Studio is used.                                                                                                                      |
+| `SANITY_BOOKINGS_TOKEN`         | yes                   | Reads and writes bookings. A project token with the **Editor** role (sanity.io/manage → the project → API → Tokens). Never prefix it with `NEXT_PUBLIC_`. Without it, the site counts no seats as taken and refuses bookings. |
+| `SANITY_REVALIDATE_SECRET`      | in production         | Shared secret of the Sanity webhook below. Any long random string, e.g. from `openssl rand -hex 32`.                                                                                                                          |
 
 `.env.local` is never committed; the template is `web/.env.example`.
 
@@ -68,8 +69,9 @@ The Studio is in Romanian; the names in quotes below are what you'll see there.
 
 - **Workshops ("Ateliere"):** title, verb, description, photo (with alt text), price, duration, capacity. Drag and drop to change their order on the poster board. "Ascuns" (hidden) takes a workshop off the site.
 - **Gallery ("Galeria", inside each workshop):** the photo wall on the workshop page, each photo with alt text. Drag to reorder; the site picks each frame's size from the photo's shape. Until it has photos, the page shows striped `[FOTO n]` placeholders.
-- **Sessions ("Sesiuni"):** the workshop, date and time (Romanian time), seats left, status (open / full / cancelled). The site only shows sessions that haven't started yet.
-- **Reviews ("Recenzii"):** appear in the register ("Condica") only when "Apare pe site" (shown on site) is on.
+- **Sessions ("Sesiuni"):** the workshop, date and time (Romanian time), status (open / full / cancelled) and, only if it differs from the workshop's, the session's own number of seats. Seats left are worked out from the bookings. The site only shows sessions that haven't started yet.
+- **Bookings ("Rezervări"):** every request from the site, plus the ones you add by hand (phone, WhatsApp) with "Rezervare nouă". See [Bookings](#bookings).
+- **Reviews ("Recenzii"):** appear in the register ("Condica") only when "Apare pe site" (shown on site) is on. Visitors write them through the guest book form (see [Guest book form and QR code](#guest-book-form-and-qr-code)); new ones wait under Recenzii → De aprobat.
 - **Site settings ("Setări site"):** address, metro station, email, WhatsApp, Instagram, company details, the hidden cat's promo code, and the team ("Echipa": name, role, a few lines and a square portrait for each person on the honour board in the About section). The manifesto itself is site copy, in the dictionaries.
 
 Every text has a Romanian and an English field. If the English is missing, `/en` shows the Romanian text.
@@ -78,15 +80,29 @@ Empty fields show on the site as visible placeholders (`[ADRESA]`, `[PREȚ]`, `[
 
 ## Bookings
 
-On each workshop's page (`/atelier/<slug>`), the visitor picks a day, a time and how many people, then sends a **request**:
+On each workshop's page (`/atelier/<slug>`), the visitor picks a session and how many people, then sends a **request**:
 
-1. The server validates the form and re-reads the session from Sanity: it must be open, not started yet, and have enough seats.
-2. Two emails go out: one to you (Reply-To = the customer) and a confirmation to the customer, in their language ("we'll confirm within 24 hours").
-3. **Seats don't go down automatically.** After you confirm a booking, update "Locuri rămase" (seats left) on the session in the Studio.
+1. The server validates the form and re-reads the session from Sanity: it must be open, not started yet, and have enough seats once the other bookings are counted.
+2. The request is saved in the Studio under **Rezervări → De confirmat** (status "De confirmat"). From that moment it holds its seats on the site.
+3. Two emails go out: one to you (Reply-To = the customer, with a link to the booking in the Studio) and a confirmation to the customer, in their language ("we'll confirm within 24 hours"). If an email fails, the booking is still saved.
+4. Set the booking's status to **Confirmată**, **Refuzată** or **Anulată** and press Publish: the customer gets an email about it at the address from the form, in their language (a confirmation also says where to come). Each status is emailed once; the booking shows which one went out ("Clientul a primit mailul pentru"). Refuzată and Anulată free the seats. A booking added by hand gets the emails too if you fill in its email; leave the email empty if you'd rather tell them yourself.
+
+**Seats left** = the session's seats (or, if empty, the workshop's "capacity") minus the people in bookings that are "De confirmat" or "Confirmată". At 0 the time shows as full. Without any capacity, the site shows no seat count and takes up to 10 people per booking. Two requests sent in the same second can both get through for the last seats; you'll see that when confirming.
+
+**Bookings are private.** The Sanity dataset is public (the site reads it without a login), but documents whose id has a path, like `booking.…`, are only readable with a token. That's why bookings can only be created from the Studio's "Rezervare nouă" button or by the site, and "Duplicate" is turned off for them: anything else would give them a public id, and the Studio refuses to publish a booking without the private id. The site reads and writes them with `SANITY_BOOKINGS_TOKEN` (server-only).
 
 Anti-spam: a hidden honeypot field, and at most 5 requests per 10 minutes from the same connection (counted per server instance, so it only slows a bot down). The customer's confirmation never repeats free text: the note only goes to you, and names with links or addresses are refused, so the form can't be used to mail someone else's message from your domain.
 
 The code lives in `web/src/booking/`. Online payment (Stripe, stage 2) will replace only the email step.
+
+## Guest book form and QR code
+
+`/condica` (and `/en/condica`) is the form for writing in the guest book: first name, which workshop (optional) and a few lines, no links. It's linked from the register on the home page, but mostly reached from a QR code on the tables:
+
+- **`/condica/afis`** is an A5 sheet to print, with the QR code. Pick a workshop at the top of the page to make one for it (`/condica/afis?atelier=mozaic`): its QR code opens the form with that workshop already chosen. The sheet itself isn't linked from the site and stays out of search.
+- **Print it only once the site has its final domain** (`NEXT_PUBLIC_SITE_URL`): the QR code holds the full address, and a printed code can't follow a move.
+
+Each line is saved as a review with "Apare pe site" off, under a private id (`review.…`), so nobody can read it through the API before you approve it, and you get an email about it (to the same address as bookings). The register reads approved reviews with `SANITY_BOOKINGS_TOKEN`; an approved one shows on the site through the publish webhook, or within a minute. Same anti-spam as the booking form: a honeypot field and at most 5 lines per 10 minutes from one connection.
 
 ## When you change the schema or queries
 
@@ -151,11 +167,26 @@ sanity.io/manage → the project → API → Webhooks → Create webhook:
 - **URL:** `https://<your-domain>/api/revalidate`
 - **Dataset:** `production`
 - **Trigger on:** Create, Update, Delete
-- **Filter:** `_type in ["workshop", "session", "review", "siteSettings"]`
+- **Filter:** `_type in ["workshop", "session", "booking", "review", "siteSettings"]`
 - **HTTP method:** POST, with drafts and versions off
 - **Secret:** the same value as `SANITY_REVALIDATE_SECRET` on Vercel
 
 The route rejects calls without a valid signature. After a publish, the next visit renders fresh content.
+
+### Webhook in Sanity (emails the customer when a booking's status changes)
+
+A second webhook, same place (sanity.io/manage → API → Webhooks → Create webhook):
+
+- **Name:** e.g. `Rezervări: anunță clientul`
+- **URL:** `https://<your-domain>/api/booking-status`
+- **Dataset:** `production`
+- **Trigger on:** Create, Update
+- **Filter:** `_type == "booking" && status in ["confirmed", "declined", "cancelled"] && (delta::operation() == "create" || delta::changedAny(status))`
+- **Projection:** `{_id}` (only the id: the site re-reads the booking itself, so no names or emails end up in Sanity's webhook logs)
+- **HTTP method:** POST, with drafts and versions off (the email goes out on Publish)
+- **Secret:** the same value as `SANITY_REVALIDATE_SECRET`
+
+If an email fails, the route answers with an error and Sanity retries later. The webhook's attempt log in sanity.io/manage shows what happened (`"sent": true`, or why it was skipped).
 
 ### Analytics
 

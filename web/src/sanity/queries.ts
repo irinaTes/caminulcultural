@@ -10,7 +10,7 @@ const UPCOMING_SESSIONS = /* groq */ `
     && workshop._ref == ^._id
     && status != "cancelled"
     && dateTime(startsAt) > dateTime($now)
-  ] | order(startsAt asc) { _id, startsAt, seatsLeft, status }
+  ] | order(startsAt asc) { _id, startsAt, capacity, status }
 `;
 
 const PHOTO = /* groq */ `
@@ -49,6 +49,7 @@ export const POSTER_BOARD_QUERY = defineQuery(`
     shortLine,
     price,
     durationHours,
+    capacity,
     pinColor,
     ${PHOTO},
     ${UPCOMING_SESSIONS}
@@ -78,7 +79,11 @@ export const WORKSHOP_SLUGS_QUERY = defineQuery(`
 
 /** Names of the visible workshops, for the rent and gift pickers. */
 export const WORKSHOP_NAMES_QUERY = defineQuery(`
-  *[_type == "workshop" && hidden != true] | order(orderRank) { _id, title }
+  *[_type == "workshop" && hidden != true] | order(orderRank) {
+    _id,
+    "slug": slug.current,
+    title
+  }
 `);
 
 /** Approved reviews for the register, newest first. */
@@ -92,14 +97,44 @@ export const REVIEWS_QUERY = defineQuery(`
   }
 `);
 
-/** One session and its workshop, re-read when someone books it. */
+/** Bookings that hold seats: waiting for confirmation or confirmed. */
+const HOLDS_SEATS = /* groq */ `status in ["pending", "confirmed"]`;
+
+/**
+ * One session and its workshop, re-read when someone books it, with the
+ * seats already held. Needs the private client: bookings aren't public.
+ */
 export const BOOKING_SESSION_QUERY = defineQuery(`
   *[_type == "session" && _id == $id][0] {
     _id,
     startsAt,
-    seatsLeft,
+    capacity,
     status,
+    "taken": math::sum(*[_type == "booking" && session._ref == ^._id && ${HOLDS_SEATS}].people),
     "workshop": workshop-> { _id, title, price, capacity, hidden }
+  }
+`);
+
+/** Seats held per session, for the given sessions. Private client only. */
+export const TAKEN_SEATS_QUERY = defineQuery(`
+  *[_type == "booking" && session._ref in $ids && ${HOLDS_SEATS}] {
+    "session": session._ref,
+    people
+  }
+`);
+
+/** One booking, re-read when its status changes, to tell the customer. Private client only. */
+export const BOOKING_NOTICE_QUERY = defineQuery(`
+  *[_type == "booking" && _id == $id][0] {
+    _id,
+    status,
+    notifiedStatus,
+    people,
+    name,
+    email,
+    lang,
+    "startsAt": session->startsAt,
+    "workshop": session->workshop-> { title, price }
   }
 `);
 

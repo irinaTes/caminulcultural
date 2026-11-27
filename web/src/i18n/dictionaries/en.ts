@@ -158,6 +158,30 @@ const en: Dictionary = {
       "If you'd like to change anything, just reply to this email. See you at the Cămin!",
     signature: "Căminul Cultural 31",
   },
+  bookingStatusEmail: {
+    confirmed: {
+      subject: "Your seat is confirmed: {workshop}, {when}",
+      intro:
+        "Done, your seat is confirmed. We'll light the lamp, you just bring the mood.",
+      outro:
+        "If you can't make it after all, reply to this email so we can give the seat to someone else. See you at the Cămin!",
+    },
+    declined: {
+      subject: "We couldn't keep your seat: {workshop}, {when}",
+      intro:
+        "Sorry, this time we couldn't confirm your seat. There are other nights on the poster board.",
+      outro: "Reply to this email and we'll find a date that works together.",
+    },
+    cancelled: {
+      subject: "Your booking is cancelled: {workshop}, {when}",
+      intro: "The booking below is cancelled, and its seats are free again.",
+      outro:
+        "If that's a mistake or you'd like another date, just reply to this email.",
+    },
+    details: "Your booking",
+    where: "Where",
+    metro: "Metro",
+  },
   contact: {
     workshopPhrase: "the {name} workshop",
     anyWorkshop: "a workshop we pick together",
@@ -239,6 +263,44 @@ const en: Dictionary = {
     placeholderName: "[first name]",
     placeholderFirst: "[a real review, after the first workshop]",
     placeholder: "[a real review]",
+    cta: "Been to one of our nights? Sign the guest book",
+  },
+  reviewForm: {
+    metaTitle: "Sign the guest book",
+    metaDescription:
+      "Been to a night at Căminul Cultural 31? Leave us a line in the guest book.",
+    label: "Guest book",
+    title: "Sign the guest book",
+    intro:
+      "Been to a night at the Cămin? Leave us a line. We'll read it, cry a little, then paste it into the guest book on the site.",
+    firstName: "Your first name",
+    workshop: "Which workshop were you at?",
+    workshopNone: "Can't remember, or another one",
+    text: "How was it?",
+    textHint: "Up to 600 characters. No links, please.",
+    submit: "Sign with a paw",
+    sending: "Signing…",
+    errorName: "Just your first name, please, no links.",
+    errorText: "Write us at least a sentence, no links, under 600 characters.",
+    errorRate: "You've written a lot in a few minutes. Try again a bit later.",
+    errorSend:
+      "We couldn't save your line. Try once more or write to us directly.",
+    sentTitle: "Thank you!",
+    sentText:
+      "We've got your line. Once we've read it, you'll find it in the guest book on the site.",
+    seeRegister: "See the guest book",
+    poster: {
+      metaTitle: "Guest book poster",
+      title: "Sign the guest book",
+      text: "Scan and tell us how the night went.",
+      forWorkshop: "The {name} workshop",
+      qrLabel: "QR code to the guest book form: {url}",
+      print: "Print the poster",
+      pickWorkshop: "Poster for one workshop",
+      anyWorkshop: "For any workshop",
+      printHint:
+        "A printable page (A5). The QR code leads to the address below; print it once the site has its final domain.",
+    },
   },
   about: {
     label: "05 · About the Cămin",

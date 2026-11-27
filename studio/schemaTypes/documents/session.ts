@@ -31,29 +31,18 @@ export const session = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'seatsLeft',
-      title: 'Locuri rămase',
-      description: 'Actualizează-l după fiecare rezervare. La 0, ora apare „plin” pe site.',
+      name: 'capacity',
+      title: 'Locuri la sesiunea asta',
+      description:
+        'Doar dacă diferă de atelier. Gol: cât scrie la atelier. Locurile rămase se calculează singure din Rezervări.',
       type: 'number',
-      validation: (rule) =>
-        rule
-          .integer()
-          .min(0)
-          .custom(async (seats, context) => {
-            const ref = (context.document?.workshop as {_ref?: string} | undefined)?._ref
-            if (typeof seats !== 'number' || !ref) return true
-            const capacity = await context
-              .getClient({apiVersion: '2026-10-22'})
-              .fetch<number | null>(`*[_id in [$id, "drafts." + $id]][0].capacity`, {id: ref})
-            return capacity == null || seats <= capacity
-              ? true
-              : `Atelierul are doar ${capacity} locuri în total.`
-          }),
+      validation: (rule) => rule.integer().min(1),
     }),
     defineField({
       name: 'status',
       title: 'Stare',
-      description: 'Plină: ora apare tăiată pe afiș. Anulată: sesiunea dispare de pe site.',
+      description:
+        'Plină: ora apare tăiată pe afiș, chiar dacă mai sunt locuri (se face plină și singură când se ocupă toate). Anulată: sesiunea dispare de pe site.',
       type: 'string',
       options: {list: statuses, layout: 'radio', direction: 'horizontal'},
       initialValue: 'open',
@@ -68,17 +57,19 @@ export const session = defineType({
     select: {
       workshop: 'workshop.title.ro',
       startsAt: 'startsAt',
-      seatsLeft: 'seatsLeft',
+      capacity: 'capacity',
+      workshopCapacity: 'workshop.capacity',
       status: 'status',
       media: 'workshop.photo',
     },
-    prepare: ({workshop, startsAt, seatsLeft, status, media}) => {
-      const state =
-        status === 'open'
-          ? typeof seatsLeft === 'number'
-            ? `${seatsLeft} locuri rămase`
-            : 'Deschisă'
-          : statuses.find((s) => s.value === status)?.title
+    prepare: ({workshop, startsAt, capacity, workshopCapacity, status, media}) => {
+      const seats = capacity ?? workshopCapacity
+      const state = [
+        statuses.find((s) => s.value === status)?.title,
+        typeof seats === 'number' && `${seats} locuri`,
+      ]
+        .filter(Boolean)
+        .join(' · ')
       return {
         title: `${workshop ?? 'Fără atelier'} · ${startsAt ? formatSessionTime(startsAt) : 'fără dată'}`,
         subtitle: state,

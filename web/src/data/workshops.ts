@@ -1,13 +1,16 @@
 import "server-only";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { siteTimeZone } from "@/config/site";
 import { intlLocales, type Locale } from "@/i18n/config";
 import { shortDayLabel, zonedDateTime } from "@/lib/dates";
+import { seatsLeft } from "@/lib/seats";
 import { urlFor } from "@/sanity/image";
 import { sanityFetch } from "@/sanity/live";
 import { localized, localizedBlocks } from "@/sanity/localized";
+import { bookingsCacheTag, privateClient } from "@/sanity/privateClient";
 import {
   POSTER_BOARD_QUERY,
+  TAKEN_SEATS_QUERY,
   WORKSHOP_NAMES_QUERY,
   WORKSHOP_PAGE_QUERY,
   WORKSHOP_SLUGS_QUERY,
@@ -29,7 +32,10 @@ import type {
 // Content changes reach the pages through <SanityLive />, which revalidates
 // these entries by their Sanity tags. Time passing changes no content, so the
 // session lists are also refreshed every minute: a session leaves the site
-// about a minute after it starts, and earlier days never show.
+// about a minute after it starts, and earlier days never show. Bookings are
+// private, so SanityLive can't see them: a new booking expires
+// `bookingsCacheTag`, and a status changed in the Studio shows within the
+// minute (or at once, through the publish webhook).
 
 /** How many days fit on one poster. The workshop page shows them all. */
 const DAYS_PER_POSTER = 3;
@@ -48,9 +54,13 @@ export async function getPosterBoard(locale: Locale): Promise<Poster[]> {
     perspective: "published",
     stega: false,
   });
+  const taken = await takenSeats(data.flatMap((w) => w.sessions));
 
   return data.map((workshop, index) => {
-    const summary = toSummary(workshop, locale, { width: 800, height: 800 });
+    const summary = toSummary(workshop, locale, taken, {
+      width: 800,
+      height: 800,
+    });
     const dates = summary.days.slice(0, DAYS_PER_POSTER).map((d) => d.date);
     return {
       ...summary,
@@ -76,6 +86,7 @@ export async function getWorkshopNames(
 
   return data.map((workshop) => ({
     id: workshop._id,
+    slug: workshop.slug,
     name: localized(workshop.title, locale),
   }));
 }
@@ -95,9 +106,10 @@ export async function getWorkshop(
     stega: false,
   });
   if (!data) return null;
+  const taken = await takenSeats(data.sessions);
 
   return {
-    ...toSummary(data, locale, { width: 1200, height: 900 }),
+    ...toSummary(data, locale, taken, { width: 1200, height: 900 }),
     capacity: data.capacity,
     description: localizedBlocks(data.description, locale),
     gallery: (data.gallery ?? []).map((photo) => toGalleryPhoto(photo, locale)),
@@ -156,21 +168,47 @@ export async function getWorkshopSlugs(): Promise<string[]> {
   return data;
 }
 
+/**
+ * Seats held by bookings (waiting or confirmed), per session id. Without the
+ * bookings token (a fresh checkout), nothing counts as taken.
+ */
+async function takenSeats(sessions: { _id: string }[]) {
+  cacheTag(bookingsCacheTag);
+  const taken = new Map<string, number>();
+  if (!privateClient || sessions.length === 0) return taken;
+
+  const bookings = await privateClient.fetch(TAKEN_SEATS_QUERY, {
+    ids: sessions.map((s) => s._id),
+  });
+  for (const { session, people } of bookings) {
+    if (session) taken.set(session, (taken.get(session) ?? 0) + (people ?? 0));
+  }
+  return taken;
+}
+
 type WorkshopResult =
   POSTER_BOARD_QUERY_RESULT[number] | NonNullable<WORKSHOP_PAGE_QUERY_RESULT>;
 
 function toSummary(
   workshop: WorkshopResult,
   locale: Locale,
+  taken: Map<string, number>,
   photoSize: { width: number; height: number },
 ): WorkshopSummary {
-  const sessions: SessionSlot[] = workshop.sessions.map((session) => ({
-    id: session._id,
-    startsAt: session.startsAt,
-    ...zonedDateTime(session.startsAt, siteTimeZone),
-    seatsLeft: session.seatsLeft,
-    full: session.status === "full" || session.seatsLeft === 0,
-  }));
+  const sessions: SessionSlot[] = workshop.sessions.map((session) => {
+    const left = seatsLeft(
+      session.capacity,
+      workshop.capacity,
+      taken.get(session._id) ?? 0,
+    );
+    return {
+      id: session._id,
+      startsAt: session.startsAt,
+      ...zonedDateTime(session.startsAt, siteTimeZone),
+      seatsLeft: left,
+      full: session.status === "full" || left === 0,
+    };
+  });
 
   const days: SessionDay[] = [...new Set(sessions.map((s) => s.date))].map(
     (date) => ({

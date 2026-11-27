@@ -1,10 +1,11 @@
 import "server-only";
 import type { Locale } from "@/i18n/config";
-import { client } from "@/sanity/client";
+import { seatsLeft } from "@/lib/seats";
 import { localized } from "@/sanity/localized";
+import { privateClient } from "@/sanity/privateClient";
 import { BOOKING_SESSION_QUERY } from "@/sanity/queries";
 
-/** Upper limit for one booking when the editor tracks neither seats nor capacity. */
+/** Upper limit for one booking when neither the session nor the workshop has a limit. */
 const MAX_GROUP = 10;
 
 export type BookableSession = {
@@ -22,16 +23,21 @@ type SessionCheck =
 /**
  * Re-reads the session straight from Sanity (no CDN, no cache) and checks it
  * can still take `people`: published, open, not started, workshop visible,
- * enough seats. The page may have been open for a while.
+ * enough seats once the other bookings are counted. The page may have been
+ * open for a while.
  */
 export async function checkSession(
   id: string,
   people: number,
   locale: Locale,
 ): Promise<SessionCheck> {
-  const data = await client
-    .withConfig({ useCdn: false })
-    .fetch(BOOKING_SESSION_QUERY, { id }, { cache: "no-store" });
+  if (!privateClient) throw new Error("SANITY_BOOKINGS_TOKEN is not set");
+  // (requestBooking checks it first and answers the visitor politely.)
+  const data = await privateClient.fetch(
+    BOOKING_SESSION_QUERY,
+    { id },
+    { cache: "no-store" },
+  );
 
   if (
     !data ||
@@ -42,7 +48,9 @@ export async function checkSession(
     return { ok: false, reason: "session" };
   }
 
-  const max = data.seatsLeft ?? data.workshop.capacity ?? MAX_GROUP;
+  const max =
+    seatsLeft(data.capacity, data.workshop.capacity, data.taken ?? 0) ??
+    MAX_GROUP;
   if (max <= 0) return { ok: false, reason: "session" };
   if (people > max) return { ok: false, reason: "seats", seatsLeft: max };
 

@@ -23,10 +23,15 @@ export function Field({
   ...props
 }: FieldProps) {
   const id = useId();
+  // A hint passed in (`aria-describedby`) stays, with the error after it.
+  const describedBy =
+    [props["aria-describedby"], error && `${id}-error`]
+      .filter(Boolean)
+      .join(" ") || undefined;
   const a11y = {
     id,
     "aria-invalid": error ? true : undefined,
-    "aria-describedby": error ? `${id}-error` : undefined,
+    "aria-describedby": describedBy,
   };
   const style = cn(control, error ? "border-cherry" : "border-navy/50");
 
