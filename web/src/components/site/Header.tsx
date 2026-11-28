@@ -1,6 +1,11 @@
 import { Logo } from "@/components/brand/Logo";
 import { ButtonLink } from "@/components/ui/Button";
-import { sectionHref, sectionIds, type SectionId } from "@/config/site";
+import {
+  hasOwnSpace,
+  sectionHref,
+  sectionIds,
+  type SectionId,
+} from "@/config/site";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
 import { LanguageSwitch } from "./LanguageSwitch";
 import { MobileMenu } from "./MobileMenu";
@@ -16,13 +21,21 @@ export async function Header({ path = "/" }: HeaderProps) {
   const t = dict.nav;
   // Full hrefs ("/#afisier"), so the links also work from other pages.
   const href = (id: SectionId) => sectionHref(locale, id);
+  // Without our own space, renting, the gift ticket and "Cum ajungi" are hidden; the
+  // contact button still leads to what's left of the latter.
   const links = [
     { href: href(sectionIds.poster), label: t.poster },
-    { href: href(sectionIds.rent), label: t.rent },
-    { href: href(sectionIds.gift), label: t.gift },
+    ...(hasOwnSpace
+      ? [
+          { href: href(sectionIds.rent), label: t.rent },
+          { href: href(sectionIds.gift), label: t.gift },
+        ]
+      : []),
     { href: href(sectionIds.register), label: t.register },
     { href: href(sectionIds.about), label: t.about },
-    { href: href(sectionIds.directions), label: t.directions },
+    ...(hasOwnSpace
+      ? [{ href: href(sectionIds.directions), label: t.directions }]
+      : []),
   ];
   const contact = { href: href(sectionIds.directions), label: t.contact };
   const languageSwitch = (

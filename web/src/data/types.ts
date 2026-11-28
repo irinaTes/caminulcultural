@@ -12,6 +12,13 @@ export type SessionDay = {
   full: boolean;
 };
 
+/** Where a workshop is held. */
+export type Venue = {
+  name: string;
+  /** Street and number, without the city: "Strada Oltarului 3". */
+  address: string;
+};
+
 export type SessionSlot = {
   id: string;
   /** The exact start, as an ISO instant. */
@@ -22,6 +29,8 @@ export type SessionSlot = {
   /** Free seats after bookings; null when neither session nor workshop has a limit. */
   seatsLeft: number | null;
   full: boolean;
+  /** The session's venue, else its workshop's; null until the editor sets one. */
+  venue: Venue | null;
 };
 
 export type WorkshopPhoto = {
@@ -43,6 +52,8 @@ export type WorkshopSummary = {
   photo: WorkshopPhoto | null;
   days: SessionDay[];
   sessions: SessionSlot[];
+  /** The different venues of these sessions, in date order. */
+  venues: Venue[];
 };
 
 export type Poster = WorkshopSummary & {

@@ -9,7 +9,7 @@ import { BusinessJsonLd } from "@/components/seo/BusinessJsonLd";
 import { RentSection } from "@/components/sections/rent/RentSection";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
-import { sectionIds } from "@/config/site";
+import { hasOwnSpace, sectionIds } from "@/config/site";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
 import { pageMetadata } from "@/lib/seo";
 
@@ -31,8 +31,8 @@ export default function Home() {
       <main id={sectionIds.content}>
         <Hero />
         <PosterBoard />
-        <RentSection />
-        <GiftSection />
+        {hasOwnSpace && <RentSection />}
+        {hasOwnSpace && <GiftSection />}
         <RegisterSection />
         <AboutSection />
         <DirectionsSection />

@@ -1,4 +1,5 @@
 import "server-only";
+import type { Venue } from "@/data/types";
 import type { Locale } from "@/i18n/config";
 import { seatsLeft } from "@/lib/seats";
 import { localized } from "@/sanity/localized";
@@ -13,6 +14,7 @@ export type BookableSession = {
   startsAt: string;
   workshop: string;
   priceLei: number | null;
+  venue: Venue | null;
 };
 
 type SessionCheck =
@@ -61,6 +63,7 @@ export async function checkSession(
       startsAt: data.startsAt,
       workshop: localized(data.workshop.title, locale),
       priceLei: data.workshop.price,
+      venue: data.venue,
     },
   };
 }

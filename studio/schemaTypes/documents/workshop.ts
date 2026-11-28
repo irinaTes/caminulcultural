@@ -115,6 +115,14 @@ export const workshop = defineType({
       validation: (rule) => rule.integer().min(1),
     }),
     defineField({
+      name: 'venue',
+      title: 'Unde se ține',
+      description:
+        'Locul obișnuit al atelierului. Apare pe afiș, pe pagina atelierului și în mailul de confirmare. O sesiune îl poate schimba.',
+      type: 'reference',
+      to: [{type: 'venue'}],
+    }),
+    defineField({
       name: 'pinColor',
       title: 'Culoarea pionezei',
       type: 'string',

@@ -1,7 +1,7 @@
 import { FrameCat } from "@/components/cats";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { sectionIds } from "@/config/site";
+import { sectionIds, sectionLabel } from "@/config/site";
 import { getPosterBoard } from "@/data/workshops";
 import { getSiteSettings } from "@/data/siteSettings";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
@@ -29,7 +29,7 @@ export async function PosterBoard() {
     >
       <SectionHeader
         titleId={titleId}
-        label={t.label}
+        label={sectionLabel(sectionIds.poster, t.label)}
         title={t.title}
         intro={t.intro}
         className="mb-14"

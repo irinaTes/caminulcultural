@@ -2,7 +2,7 @@ import Image from "next/image";
 import { ApprovedStamp } from "@/components/cats";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { sectionIds } from "@/config/site";
+import { sectionIds, sectionLabel } from "@/config/site";
 import { getTeam } from "@/data/team";
 import type { TeamMember } from "@/data/types";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
@@ -40,7 +40,7 @@ export async function AboutSection() {
           <SectionHeading
             titleId={titleId}
             tone="dark"
-            label={t.label}
+            label={sectionLabel(sectionIds.about, t.label)}
             title={
               <>
                 {t.title}

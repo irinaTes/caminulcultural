@@ -1,7 +1,7 @@
 import { CatEyes, HangingLamp } from "@/components/cats";
 import { ButtonLink } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { anchor, sectionIds } from "@/config/site";
+import { anchor, hasOwnSpace, sectionIds } from "@/config/site";
 import { getDictionary } from "@/i18n/dictionaries";
 import { cn } from "@/lib/cn";
 import { HeroLightSwitch } from "./HeroLightSwitch";
@@ -31,7 +31,8 @@ export async function Hero() {
   return (
     <HeroStage
       id={sectionIds.home}
-      className="group relative flex min-h-[calc(100svh-5.75rem)] flex-col justify-center overflow-hidden bg-bordeaux px-gutter pt-30 pb-27.5 text-cream"
+      // Below lg the text spans the width under the lamp: start it lower.
+      className="group relative flex min-h-[calc(100svh-5.75rem)] flex-col justify-center overflow-hidden bg-bordeaux px-gutter pt-30 pb-27.5 text-cream max-lg:pt-48"
     >
       {/* Velvet curtain */}
       <div
@@ -64,9 +65,10 @@ export async function Hero() {
 
       <div className="relative mx-auto flex w-full max-w-320 flex-wrap items-center gap-18">
         <div className="relative flex min-w-0 flex-[999_1_32.5rem] flex-col gap-6.5">
+          {/* Hidden on phones, and from lg to xl, where it would sit under the lamp. */}
           <Stamp
             ring={t.stampRing}
-            className="absolute -top-19.5 right-0 size-37.5 max-md:hidden"
+            className="absolute -top-19.5 right-0 size-37.5 max-md:hidden lg:max-xl:hidden"
           />
 
           <Eyebrow className="text-glow">{t.kicker}</Eyebrow>
@@ -105,13 +107,15 @@ export async function Hero() {
             >
               {t.ctaPoster}
             </ButtonLink>
-            <ButtonLink
-              href={anchor(sectionIds.rent)}
-              variant="outline"
-              size="lg"
-            >
-              {t.ctaRent}
-            </ButtonLink>
+            {hasOwnSpace && (
+              <ButtonLink
+                href={anchor(sectionIds.rent)}
+                variant="outline"
+                size="lg"
+              >
+                {t.ctaRent}
+              </ButtonLink>
+            )}
           </div>
         </div>
 

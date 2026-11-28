@@ -3,7 +3,7 @@ import { PawPrint, SleepingCat } from "@/components/cats";
 import { buttonClasses } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { reviewHref, sectionIds } from "@/config/site";
+import { reviewHref, sectionIds, sectionLabel } from "@/config/site";
 import { getReviews } from "@/data/reviews";
 import { intlLocales } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
@@ -70,7 +70,11 @@ export async function RegisterSection() {
       <div className="mx-auto flex max-w-300 flex-col gap-9">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="flex max-w-160 flex-col gap-3.5">
-            <SectionHeading titleId={titleId} label={t.label} title={t.title} />
+            <SectionHeading
+              titleId={titleId}
+              label={sectionLabel(sectionIds.register, t.label)}
+              title={t.title}
+            />
             <p className="text-xl leading-[1.6]">
               {reviews.length > 0 ? t.intro : t.introEmpty}
             </p>

@@ -1,6 +1,6 @@
 import { PartyCat } from "@/components/cats";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { sectionIds } from "@/config/site";
+import { sectionIds, sectionLabel } from "@/config/site";
 import { getSiteSettings } from "@/data/siteSettings";
 import { getWorkshopNames } from "@/data/workshops";
 import { intlLocales } from "@/i18n/config";
@@ -29,7 +29,7 @@ export async function RentSection() {
           <SectionHeading
             titleId={titleId}
             tone="dark"
-            label={t.label}
+            label={sectionLabel(sectionIds.rent, t.label)}
             title={
               <>
                 {t.title}

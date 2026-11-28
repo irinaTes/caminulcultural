@@ -1,6 +1,6 @@
 import { ButtonLink, buttonClasses } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { sectionIds, siteCity } from "@/config/site";
+import { hasOwnSpace, sectionIds, sectionLabel, siteCity } from "@/config/site";
 import { getSiteSettings } from "@/data/siteSettings";
 import { getDictionary } from "@/i18n/dictionaries";
 import { fill } from "@/i18n/format";
@@ -60,20 +60,25 @@ export async function DirectionsSection() {
           <SectionHeading
             titleId={titleId}
             tone="dark"
-            label={t.label}
-            title={t.title}
+            label={sectionLabel(
+              sectionIds.directions,
+              hasOwnSpace ? t.label : t.contactOnlyLabel,
+            )}
+            title={hasOwnSpace ? t.title : t.contactOnlyTitle}
           />
 
-          <address className="flex flex-col gap-2.5 text-xl leading-normal not-italic">
-            <span>
-              {address ?? t.addressPlaceholder}, {siteCity}
-            </span>
-            <span>
-              {metroStation
-                ? fill(t.metro, { station: metroStation })
-                : t.metroPlaceholder}
-            </span>
-          </address>
+          {hasOwnSpace && (
+            <address className="flex flex-col gap-2.5 text-xl leading-normal not-italic">
+              <span>
+                {address ?? t.addressPlaceholder}, {siteCity}
+              </span>
+              <span>
+                {metroStation
+                  ? fill(t.metro, { station: metroStation })
+                  : t.metroPlaceholder}
+              </span>
+            </address>
+          )}
 
           <ul aria-label={t.contactLabel} className="flex flex-wrap gap-3">
             {contacts.map((contact) => (
@@ -105,29 +110,31 @@ export async function DirectionsSection() {
           </ul>
         </div>
 
-        <figure className="flex min-h-85 min-w-0 flex-[1_1_27.5rem] flex-col overflow-hidden rounded-[10px] border-2 border-glow/60">
-          <div className="relative min-h-65 flex-1">
-            <IllustratedMap pinLabel={t.mapPin} />
-          </div>
-          <figcaption className="flex flex-wrap items-center justify-between gap-x-5 gap-y-3 bg-navy-deep px-5 py-4">
-            <span className="text-base text-cream/85">{t.mapNote}</span>
-            {address ? (
-              <ButtonLink
-                href={mapsHref(`${address}, ${siteCity}`)}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="glow"
-                size="sm"
-              >
-                {t.openMap}
-              </ButtonLink>
-            ) : (
-              <span className="font-label text-[0.8125rem] tracking-label text-glow">
-                {t.addressPlaceholder}
-              </span>
-            )}
-          </figcaption>
-        </figure>
+        {hasOwnSpace && (
+          <figure className="flex min-h-85 min-w-0 flex-[1_1_27.5rem] flex-col overflow-hidden rounded-[10px] border-2 border-glow/60">
+            <div className="relative min-h-65 flex-1">
+              <IllustratedMap pinLabel={t.mapPin} />
+            </div>
+            <figcaption className="flex flex-wrap items-center justify-between gap-x-5 gap-y-3 bg-navy-deep px-5 py-4">
+              <span className="text-base text-cream/85">{t.mapNote}</span>
+              {address ? (
+                <ButtonLink
+                  href={mapsHref(`${address}, ${siteCity}`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="glow"
+                  size="sm"
+                >
+                  {t.openMap}
+                </ButtonLink>
+              ) : (
+                <span className="font-label text-[0.8125rem] tracking-label text-glow">
+                  {t.addressPlaceholder}
+                </span>
+              )}
+            </figcaption>
+          </figure>
+        )}
       </div>
     </section>
   );

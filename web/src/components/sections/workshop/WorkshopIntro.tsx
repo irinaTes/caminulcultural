@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
+import { VenueLinks } from "@/components/sessions/VenueLinks";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { RichText } from "@/components/ui/RichText";
 import { sectionHref, sectionIds } from "@/config/site";
@@ -14,7 +16,15 @@ export async function WorkshopIntro({ workshop }: WorkshopIntroProps) {
   const [locale, dict] = await Promise.all([getLocale(), getDictionary()]);
   const t = dict.workshop;
 
-  const facts = [
+  const facts: { label: string; value: ReactNode }[] = [
+    ...(workshop.venues.length > 0
+      ? [
+          {
+            label: t.where,
+            value: <VenueLinks venues={workshop.venues} withAddress />,
+          },
+        ]
+      : []),
     {
       label: t.duration,
       value: fill(t.durationValue, { hours: workshop.durationHours }),

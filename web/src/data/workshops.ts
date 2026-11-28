@@ -24,6 +24,7 @@ import type {
   Poster,
   SessionDay,
   SessionSlot,
+  Venue,
   WorkshopDetail,
   WorkshopName,
   WorkshopSummary,
@@ -62,10 +63,12 @@ export async function getPosterBoard(locale: Locale): Promise<Poster[]> {
       height: 800,
     });
     const dates = summary.days.slice(0, DAYS_PER_POSTER).map((d) => d.date);
+    const sessions = summary.sessions.filter((s) => dates.includes(s.date));
     return {
       ...summary,
       days: summary.days.slice(0, DAYS_PER_POSTER),
-      sessions: summary.sessions.filter((s) => dates.includes(s.date)),
+      sessions,
+      venues: uniqueVenues(sessions),
       pinColor: workshop.pinColor,
       rotation: TILTS[index % TILTS.length],
     };
@@ -207,6 +210,7 @@ function toSummary(
       ...zonedDateTime(session.startsAt, siteTimeZone),
       seatsLeft: left,
       full: session.status === "full" || left === 0,
+      venue: session.venue,
     };
   });
 
@@ -241,5 +245,15 @@ function toSummary(
       : null,
     days,
     sessions,
+    venues: uniqueVenues(sessions),
   };
+}
+
+/** The sessions' venues without repeats, in date order. */
+function uniqueVenues(sessions: SessionSlot[]) {
+  const venues = new Map<string, Venue>();
+  for (const { venue } of sessions) {
+    if (venue && !venues.has(venue.name)) venues.set(venue.name, venue);
+  }
+  return [...venues.values()];
 }

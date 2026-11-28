@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
       startsAt: booking.startsAt,
       workshop: localized(booking.workshop.title, lang),
       priceLei: booking.workshop.price,
+      venue: booking.venue,
     },
     settings,
   );

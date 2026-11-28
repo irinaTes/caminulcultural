@@ -3,6 +3,11 @@ import { defineQuery } from "next-sanity";
 // Text fields come back as { ro, en } objects; pick a language with
 // `localized()` from "@/sanity/localized".
 
+/** Where a session is held: its own venue, else its workshop's (`workshop->`). */
+const SESSION_VENUE = /* groq */ `
+  "venue": coalesce(venue, workshop->venue)-> { name, address }
+`;
+
 /** A workshop's sessions that haven't started yet ($now), soonest first. */
 const UPCOMING_SESSIONS = /* groq */ `
   "sessions": *[
@@ -10,7 +15,7 @@ const UPCOMING_SESSIONS = /* groq */ `
     && workshop._ref == ^._id
     && status != "cancelled"
     && dateTime(startsAt) > dateTime($now)
-  ] | order(startsAt asc) { _id, startsAt, capacity, status }
+  ] | order(startsAt asc) { _id, startsAt, capacity, status, ${SESSION_VENUE} }
 `;
 
 const PHOTO = /* groq */ `
@@ -111,7 +116,8 @@ export const BOOKING_SESSION_QUERY = defineQuery(`
     capacity,
     status,
     "taken": math::sum(*[_type == "booking" && session._ref == ^._id && ${HOLDS_SEATS}].people),
-    "workshop": workshop-> { _id, title, price, capacity, hidden }
+    "workshop": workshop-> { _id, title, price, capacity, hidden },
+    ${SESSION_VENUE}
   }
 `);
 
@@ -134,7 +140,8 @@ export const BOOKING_NOTICE_QUERY = defineQuery(`
     email,
     lang,
     "startsAt": session->startsAt,
-    "workshop": session->workshop-> { title, price }
+    "workshop": session->workshop-> { title, price },
+    "venue": session-> { ${SESSION_VENUE} }.venue
   }
 `);
 

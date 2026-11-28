@@ -1,5 +1,5 @@
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { sectionIds } from "@/config/site";
+import { sectionIds, sectionLabel } from "@/config/site";
 import { getSiteSettings } from "@/data/siteSettings";
 import { getWorkshopNames } from "@/data/workshops";
 import { intlLocales } from "@/i18n/config";
@@ -29,7 +29,7 @@ export async function GiftSection() {
             <SectionHeading
               titleId={titleId}
               tone="dark"
-              label={label}
+              label={sectionLabel(sectionIds.gift, label)}
               title={title}
             />
             <p className="max-w-130 text-xl leading-[1.6]">{intro}</p>

@@ -39,6 +39,13 @@ export const session = defineType({
       validation: (rule) => rule.integer().min(1),
     }),
     defineField({
+      name: 'venue',
+      title: 'Altundeva decât de obicei',
+      description: 'Doar dacă sesiunea asta se ține în alt loc decât scrie la atelier. Gol: locul atelierului.',
+      type: 'reference',
+      to: [{type: 'venue'}],
+    }),
+    defineField({
       name: 'status',
       title: 'Stare',
       description:

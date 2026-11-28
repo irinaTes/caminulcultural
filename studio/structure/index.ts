@@ -52,6 +52,8 @@ export const structure: StructureResolver = (S, context) =>
             ]),
         ),
 
+      S.documentTypeListItem('venue').title('Locații'),
+
       bookingsItem(S, context),
 
       S.listItem()

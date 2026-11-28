@@ -47,7 +47,7 @@ const ro = {
     stampRing: "ATELIERE · VIN · LUMINĂ DE LAMPĂ · BUCUREȘTI ·",
   },
   posterBoard: {
-    label: "01 · Afișierul",
+    label: "Afișierul",
     title: "Ce facem săptămâna asta",
     intro:
       "Trei ore, materiale incluse, vinul pe noi. Alegi ziua și ora direct pe afiș.",
@@ -58,6 +58,7 @@ const ro = {
     photoAlt: "Fotografie de la atelierul de {name} (în lucru)",
     photoPlaceholder: "[FOTO · {name}]",
     when: "Când",
+    where: "Unde",
     price: "{price} lei · vin inclus",
     full: "plin",
     pickPrompt: "Alege o dată",
@@ -73,6 +74,7 @@ const ro = {
     back: "Înapoi la afișier",
     metaTitle: "{name}: {verb}",
     factsLabel: "Pe scurt",
+    where: "Unde",
     duration: "Durata",
     durationValue: "{hours} ore",
     price: "Preț",
@@ -186,7 +188,7 @@ const ro = {
     copyFailed: "N-am putut copia. Selectează textul și copiază-l de mână.",
   },
   rent: {
-    label: "02 · Închiriază Căminul",
+    label: "Închiriază Căminul",
     title: "Tot căminul,",
     titleAccent: "doar pentru voi.",
     intro:
@@ -212,7 +214,7 @@ const ro = {
     send: "Trimite mesajul pe email",
   },
   gift: {
-    label: "03 · Bilet de favoare",
+    label: "Bilet de favoare",
     title: "Cel mai bun cadou e o seară.",
     intro:
       "Un bilet nominal, valabil trei luni. Alegi un atelier anume sau pui o sumă, și ea alege singură.",
@@ -242,7 +244,7 @@ const ro = {
     send: "Ia biletul",
   },
   register: {
-    label: "04 · Condica",
+    label: "Condica",
     title: "Condica de prezență",
     intro: "Citim fiecare rând și plângem puțin.",
     introEmpty:
@@ -298,7 +300,7 @@ const ro = {
     },
   },
   about: {
-    label: "05 · Despre Cămin",
+    label: "Despre Cămin",
     title: "Două surori,",
     titleAccent: "un cămin.",
     intro:
@@ -338,8 +340,10 @@ const ro = {
     bioPlaceholder: "[două-trei rânduri despre ea]",
   },
   directions: {
-    label: "06 · Cum ajungi la Cămin",
+    label: "Cum ajungi la Cămin",
     title: "București e mare. Nu te baza pe intuiție.",
+    contactOnlyLabel: "Contact",
+    contactOnlyTitle: "Întrebări, idei, planuri? Scrie-ne.",
     addressPlaceholder: "[ADRESA]",
     metro: "Metrou {station}",
     metroPlaceholder: "[Stația de metrou cea mai apropiată]",

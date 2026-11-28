@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { VenueLinks } from "@/components/sessions/VenueLinks";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { bookingHref } from "@/config/site";
 import type { Poster } from "@/data/types";
@@ -108,6 +109,16 @@ export function PosterCard({ locale, poster, index, t }: PosterCardProps) {
             </Link>
           </h3>
           <p className="text-lg leading-[1.45]">{poster.shortLine}</p>
+          {poster.venues.length > 0 && (
+            <p className="flex flex-wrap items-baseline gap-x-2 text-[1.0625rem]">
+              <Eyebrow inline size="xs">
+                {t.where}
+              </Eyebrow>
+              <span>
+                <VenueLinks venues={poster.venues} />
+              </span>
+            </p>
+          )}
 
           {/* Only the strings the picker needs cross into the client bundle. */}
           <SessionPicker

@@ -5,7 +5,7 @@ import { getDictionaryFor } from "@/i18n/dictionaries";
 import { fill, plural } from "@/i18n/format";
 import { longDateTime } from "@/lib/dates";
 import type { Locale } from "@/i18n/config";
-import type { SiteSettings } from "@/data/types";
+import type { SiteSettings, Venue } from "@/data/types";
 import type { BookingInput } from "./schema";
 import type { BookableSession } from "./session";
 
@@ -33,6 +33,7 @@ export async function customerEmail(
   const rows: Row[] = [
     [t.workshop, session.workshop],
     [t.when, when],
+    ...venueRow(dict.bookingStatusEmail.where, session.venue),
     [t.people, plural(dict.workshop.peopleCount, input.people, intl)],
     [t.total, total(input.people, session.priceLei, dict.workshop.totalValue)],
   ];
@@ -67,6 +68,7 @@ export async function staffEmail(
       rows: [
         ["Atelierul", session.workshop],
         ["Când", when],
+        ...venueRow("Unde", session.venue),
         ["Câți vin", people],
         [
           "Total",
@@ -108,6 +110,7 @@ export async function statusEmail(
     startsAt: string;
     workshop: string;
     priceLei: number | null;
+    venue: Venue | null;
   },
   settings: Pick<SiteSettings, "address" | "metroStation">,
 ): Promise<Email> {
@@ -120,6 +123,7 @@ export async function statusEmail(
   const rows: Row[] = [
     [dict.bookingEmail.workshop, booking.workshop],
     [dict.bookingEmail.when, when],
+    ...venueRow(t.where, booking.venue),
     [
       dict.bookingEmail.people,
       plural(dict.workshop.peopleCount, booking.people, intl),
@@ -130,9 +134,12 @@ export async function statusEmail(
       dict.bookingEmail.total,
       total(booking.people, booking.priceLei, dict.workshop.totalValue),
     ]);
-    // Left out until they're filled in: no placeholders in a customer's inbox.
-    if (settings.address) rows.push([t.where, settings.address]);
-    if (settings.metroStation) rows.push([t.metro, settings.metroStation]);
+    // Without a venue, the Cămin's own address. Left out until it's filled
+    // in: no placeholders in a customer's inbox.
+    if (!booking.venue) {
+      if (settings.address) rows.push([t.where, settings.address]);
+      if (settings.metroStation) rows.push([t.metro, settings.metroStation]);
+    }
   }
 
   return render({
@@ -145,6 +152,11 @@ export async function statusEmail(
     rows,
     closing: [copy.outro, dict.bookingEmail.signature],
   });
+}
+
+/** "Mélange Café, Strada Oltarului 3", or no row while the session has no venue. */
+function venueRow(label: string, venue: Venue | null): Row[] {
+  return venue ? [[label, `${venue.name}, ${venue.address}`]] : [];
 }
 
 function total(people: number, priceLei: number | null, template: string) {

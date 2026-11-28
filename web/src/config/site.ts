@@ -17,6 +17,31 @@ export const sectionIds = {
 
 export type SectionId = (typeof sectionIds)[keyof typeof sectionIds];
 
+/**
+ * Whether the Cămin has its own space yet. Until it does, workshops are held
+ * at partner venues (set per workshop/session in Sanity), and the home page
+ * hides renting the Cămin, the gift ticket, and the address and map: "Cum
+ * ajungi" shrinks to the contact buttons. Flip to true when the space opens.
+ */
+export const hasOwnSpace = false;
+
+/** Home sections that carry a number ("01 · Afișierul"), in page order. */
+const numberedSections: SectionId[] = [
+  sectionIds.poster,
+  ...(hasOwnSpace ? [sectionIds.rent, sectionIds.gift] : []),
+  sectionIds.register,
+  sectionIds.about,
+  sectionIds.directions,
+];
+
+/** "01 · Afișierul": numbered by position, so hidden sections leave no gap. */
+export function sectionLabel(id: SectionId, label: string) {
+  const position = numberedSections.indexOf(id) + 1;
+  return position > 0
+    ? `${String(position).padStart(2, "0")} · ${label}`
+    : label;
+}
+
 /** "#afisier", for links within the home page. */
 export const anchor = (id: SectionId) => `#${id}`;
 

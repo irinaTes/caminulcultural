@@ -50,7 +50,7 @@ const en: Dictionary = {
     stampRing: "WORKSHOPS · WINE · LAMPLIGHT · BUCHAREST ·",
   },
   posterBoard: {
-    label: "01 · The Poster Board",
+    label: "The Poster Board",
     title: "What we're making this week",
     intro:
       "Three hours, materials included, wine's on us. Pick the day and time right on the poster.",
@@ -61,6 +61,7 @@ const en: Dictionary = {
     photoAlt: "Photo from the {name} workshop (coming soon)",
     photoPlaceholder: "[PHOTO · {name}]",
     when: "When",
+    where: "Where",
     price: "{price} lei · wine included",
     full: "full",
     pickPrompt: "Pick a date",
@@ -76,6 +77,7 @@ const en: Dictionary = {
     back: "Back to the poster board",
     metaTitle: "{name}: {verb}",
     factsLabel: "In short",
+    where: "Where",
     duration: "Length",
     durationValue: "{hours} hours",
     price: "Price",
@@ -191,7 +193,7 @@ const en: Dictionary = {
     copyFailed: "Couldn't copy it. Select the text and copy it by hand.",
   },
   rent: {
-    label: "02 · Rent the Cămin",
+    label: "Rent the Cămin",
     title: "The whole Cămin,",
     titleAccent: "just for you lot.",
     intro:
@@ -220,7 +222,7 @@ const en: Dictionary = {
     send: "Send the message by email",
   },
   gift: {
-    label: "03 · Gift ticket",
+    label: "Gift ticket",
     title: "The best present is a night out.",
     intro:
       "A ticket with their name on it, valid for three months. Pick a workshop, or put an amount on it and let them choose.",
@@ -249,7 +251,7 @@ const en: Dictionary = {
     send: "Get the ticket",
   },
   register: {
-    label: "04 · The register",
+    label: "The register",
     title: "The attendance register",
     intro: "We read every line and cry a little.",
     introEmpty:
@@ -303,7 +305,7 @@ const en: Dictionary = {
     },
   },
   about: {
-    label: "05 · About the Cămin",
+    label: "About the Cămin",
     title: "Two sisters,",
     titleAccent: "one Cămin.",
     intro:
@@ -343,8 +345,10 @@ const en: Dictionary = {
     bioPlaceholder: "[two or three lines about her]",
   },
   directions: {
-    label: "06 · Getting to the Cămin",
+    label: "Getting to the Cămin",
     title: "Bucharest is big. Don't trust your gut.",
+    contactOnlyLabel: "Contact",
+    contactOnlyTitle: "Questions, ideas, plans? Write to us.",
     addressPlaceholder: "[ADRESA]",
     metro: "{station} metro",
     metroPlaceholder: "[Stația de metrou cea mai apropiată]",
